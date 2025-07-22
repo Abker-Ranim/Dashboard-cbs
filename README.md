@@ -19,7 +19,7 @@ Ce projet est une application web de supervision d'API, développée avec React.
 Clonez le dépôt puis installez les dépendances :
 
 ```bash
-git clone <url-du-repo>
+git clone https://github.com/Abker-Ranim/Dashboard-cbs.git
 cd api-dashboard
 npm install
 ```
@@ -30,7 +30,9 @@ npm install
 npm start
 ```
 
-L’application sera accessible sur [http://localhost:3000](http://localhost:3000).
+L’application sera accessible sur
+```bash
+[http://localhost:3000]
 
 
 ```
