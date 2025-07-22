@@ -1,0 +1,38 @@
+.dashboard-footer {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.875rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-top: 1.5rem;
+}
+
+.footer-branding {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.footer-logo {
+  height: 2rem;
+  width: auto;
+}
+
+.footer-brand-text {
+  color: white;
+  font-weight: 500;
+}
+
+.footer-sync-info {
+  font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  .footer-branding {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
