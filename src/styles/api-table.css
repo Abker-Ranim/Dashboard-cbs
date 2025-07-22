@@ -78,21 +78,13 @@
   font-size: 0.8rem;
 }
 
-.api-table .service-cell {
-  color: #cbd5e1;
-  font-size: 0.8rem;
-}
+
 
 .api-table .response-time-cell {
   color: white;
   font-weight: 500;
 }
 
-.api-table .ip-cell {
-  color: #94a3b8;
-  font-family: "Monaco", "Menlo", monospace;
-  font-size: 0.75rem;
-}
 
 /* Badges pour méthodes HTTP - Couleurs Version 3 */
 .method-badge {

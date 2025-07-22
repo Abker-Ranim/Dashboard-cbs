@@ -37,9 +37,7 @@ export const useApiData = () => {
             endpoint: "/api/users",
             status: 200,
             responseTime: 120,
-            service: "UserService",
             userAgent: "Mozilla/5.0",
-            ip: "192.168.1.1",
           },
         ];
         const mockStats: ApiStats = {

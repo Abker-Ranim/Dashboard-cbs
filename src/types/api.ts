@@ -5,9 +5,7 @@ export interface ApiCall {
     endpoint: string;
     status: number;
     responseTime: number;
-    service: string;
     userAgent: string;
-    ip: string;
   }
   
   export interface ApiStats {
