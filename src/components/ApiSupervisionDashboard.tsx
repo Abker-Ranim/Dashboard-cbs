@@ -1,11 +1,10 @@
+// src/components/ApiSupervisionDashboard.tsx
 import React from "react";
 import { MetricsGrid } from "./MetricsGrid";
 import { ChartsGrid } from "./ChartsGrid";
 import { ApiTable } from "./ApiTable";
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardFooter } from "./DashboardFooter";
-
-
 import "../styles/dashboard.css";
 import "../styles/charts.css";
 import { DonutChart } from "./DonutChart";
@@ -21,7 +20,7 @@ const ApiSupervisionDashboard: React.FC = () => {
   if (error) {
     return (
       <div className="dashboard-container">
-        <div className="error-message">Error: {error}</div>
+        <div className="error-message" style={{ color: "red" }}>Error: {error}</div>
       </div>
     );
   }
@@ -88,26 +87,7 @@ const ApiSupervisionDashboard: React.FC = () => {
                     <p style={{ fontSize: "0.75rem", color: "#cbd5e1" }}>Error Rate</p>
                   </div>
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ color: "#cbd5e1" }}>Availability</span>
-                    <span style={{ color: "#10b981", fontWeight: "600" }}>
-                      {stats.availability?.toFixed(1) || "99.9"}%
-                    </span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ color: "#cbd5e1" }}>P95 Response Time</span>
-                    <span style={{ color: "#3b82f6", fontWeight: "600" }}>
-                      {stats.p95ResponseTime || 150}ms
-                    </span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ color: "#cbd5e1" }}>Throughput</span>
-                    <span style={{ color: "#8b5cf6", fontWeight: "600" }}>
-                      {stats.throughput || 500} req/min
-                    </span>
-                  </div>
-                </div>
+               
               </div>
             </div>
           </div>
