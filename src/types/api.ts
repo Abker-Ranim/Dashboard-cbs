@@ -1,13 +1,13 @@
+// ../types/api.ts
 export interface ApiCall {
-    id: string;
-    timestamp: Date;
-    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-    endpoint: string;
-    status: number;
-    responseTime: number;
-    userAgent: string;
-  }
-  
+  id: string;
+  timestamp: Date; // Mappé depuis startTime ou endTime
+  method: string;  // Mappé depuis httpMethod
+  endpoint: string; // Mappé depuis httpUrl
+  status: number;  // Mappé depuis status ou httpStatusCode converti
+  responseTime: number; // Mappé depuis durationMs
+  name?: string;
+}
   export interface ApiStats {
     totalRequests: number;
     successfulRequests: number;

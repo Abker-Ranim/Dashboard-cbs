@@ -1,6 +1,7 @@
 // src/hooks/useApiData.ts
 import { useState, useEffect } from "react";
 import { ApiCall, ApiStats, ChartData } from "../types/api";
+import { fetchTableData } from "../services/traceTableService";
 
 export const useApiData = () => {
   const [apiCalls, setApiCalls] = useState<ApiCall[]>([]);
@@ -29,50 +30,48 @@ export const useApiData = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const mockApiCalls: ApiCall[] = [
-          {
-            id: "1",
-            timestamp: new Date(),
-            method: "GET",
-            endpoint: "/api/users",
-            status: 200,
-            responseTime: 120,
-            userAgent: "Mozilla/5.0",
-          },
-        ];
-        const mockStats: ApiStats = {
-          totalRequests: 1000,
-          successfulRequests: 950,
-          errorRequests: 50,
-          clientErrors: 30,
-          serverErrors: 20,
-          averageResponseTime: 150,
-          requestsPerSecond: 10,
-          activeConnections: 25,
-          availability: 99.8,
+        const data = await fetchTableData();
+        console.log("useApiData - Fetched Data:", data); // Pour débogage
+        setApiCalls(data);
+
+        const totalRequests = data.length;
+        const successfulRequests = data.filter(call => call.status >= 200 && call.status < 300).length;
+        const clientErrors = data.filter(call => call.status >= 400 && call.status < 500).length;
+        const serverErrors = data.filter(call => call.status >= 500).length;
+        const errorRequests = totalRequests - successfulRequests;
+        const averageResponseTime = data.reduce((sum, call) => sum + call.responseTime, 0) / totalRequests || 0;
+
+        setStats({
+          totalRequests,
+          successfulRequests,
+          errorRequests,
+          clientErrors,
+          serverErrors,
+          averageResponseTime,
+          requestsPerSecond: 0,
+          activeConnections: 0,
+          availability: (successfulRequests / totalRequests) * 100 || 99.9,
           p95ResponseTime: 200,
           throughput: 600,
-        };
-        const mockChartData: ChartData = {
-          requestsPerMinute: [50, 60, 55, 70, 65, 80],
-          responseTime: [120, 130, 110, 140, 125, 135],
-          errorRate: [2, 3, 1, 4, 2, 3],
-        };
+        });
 
-        setApiCalls(mockApiCalls);
-        setStats(mockStats);
-        setChartData(mockChartData);
+        setChartData({
+          requestsPerMinute: Array(totalRequests).fill(0).map((_, i) => i + 1),
+          responseTime: data.map(call => call.responseTime),
+          errorRate: Array(totalRequests).fill(0).map((_, i) => i % 5 === 0 ? 1 : 0),
+        });
+
         setIsLoading(false);
       } catch (err) {
-        setError("Failed to fetch API data");
+        setError(err instanceof Error ? err.message : "Failed to fetch API data");
+        console.error("Fetch error:", err);
         setIsLoading(false);
       }
     };
 
-    fetchData();
-    const interval = setInterval(fetchData, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    fetchData(); // Appel unique au montage
+    // Supprimé setInterval pour éviter les rafraîchissements automatiques
+  }, []); // Tableau de dépendances vide pour un effet unique
 
   return { apiCalls, stats, chartData, isLoading, error };
-}
+};

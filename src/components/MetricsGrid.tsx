@@ -50,16 +50,6 @@ export const MetricsGrid = ({ stats }: MetricsGridProps) => {
         </div>
       </div>
 
-      <div className="metric-card green">
-        <div className="metric-card-header">
-          <span className="metric-card-title">Connexions Actives</span>
-          <Activity className="metric-card-icon" />
-        </div>
-        <div className="metric-card-content">
-          <div className="metric-value">{stats.activeConnections}</div>
-          <p className="metric-description">Sessions simultanées</p>
-        </div>
-      </div>
     </div>
   )
 }
