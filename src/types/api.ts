@@ -27,3 +27,13 @@ export interface ApiCall {
     responseTime: number[];
     errorRate: number[];
   }
+  export interface EvolutionDataPoint {
+    time: string;
+    success: number;
+    errors: number;
+    total: number;
+  }
+  export interface EvolutionResponse {
+    data: EvolutionDataPoint[];
+    status: number;
+  }
