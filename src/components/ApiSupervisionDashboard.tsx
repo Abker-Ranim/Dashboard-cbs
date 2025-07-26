@@ -9,7 +9,8 @@ import "../styles/dashboard.css";
 import "../styles/charts.css";
 import { DonutChart } from "./DonutChart";
 import { useApiData } from "../hooks/useApiData";
-
+import { RequestEvolutionChart } from "./RequestEvolutionChart";
+import { ApiCorrelation2D } from "./ApiCorrelation2D";
 const ApiSupervisionDashboard: React.FC = () => {
   const { apiCalls, stats, chartData, isLoading, error } = useApiData();
 
@@ -92,8 +93,13 @@ const ApiSupervisionDashboard: React.FC = () => {
             </div>
           </div>
         </div>
+        <div className="grid grid-cols-1 gap-6">
+            <RequestEvolutionChart />
+            <ApiCorrelation2D />
+          </div>
         <ApiTable apiCalls={apiCalls} />
         <DashboardFooter />
+
       </div>
     </div>
   );
