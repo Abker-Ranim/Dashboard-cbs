@@ -22,16 +22,6 @@
   box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.4);
 }
 
-.metric-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--gradient-primary);
-}
-
 .metric-card-header {
   display: flex;
   align-items: center;
@@ -73,21 +63,16 @@
 
 /* Couleurs spécifiques Version 3 */
 .metric-card.blue {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
+  background: linear-gradient(135deg, rgba(59, 131, 246, 0.675), rgba(59, 130, 246, 0.1));
   border-color: rgba(59, 130, 246, 0.3);
 }
 
 .metric-card.red {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+  background: linear-gradient(135deg, rgba(244, 23, 23, 0.407), rgba(238, 49, 49, 0.1));
   border-color: rgba(239, 68, 68, 0.3);
 }
 
 .metric-card.gray {
-  background: linear-gradient(135deg, rgba(100, 116, 139, 0.2), rgba(100, 116, 139, 0.1));
+  background: linear-gradient(135deg, rgba(255, 221, 0, 0.548), rgba(198, 208, 57, 0.153));
   border-color: rgba(100, 116, 139, 0.3);
-}
-
-.metric-card.green {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
-  border-color: rgba(16, 185, 129, 0.3);
 }
