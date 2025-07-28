@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Globe, Server } from "lucide-react";
 import type { ApiCall } from "../types/api";
-import { formatResponseTime } from "../utils/formatters"; // Supprimé getStatusColor et getMethodColor
+import { formatResponseTime } from "../utils/formatters"; 
 import "../styles/api-table.css";
 import { fetchTableData } from "../services/traceTableService";
 
@@ -72,12 +72,11 @@ export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) =>
         <table className="api-table">
           <thead>
             <tr>
+              <th>Method</th>
               <th>Start Time</th>
               <th>End Time</th>
               <th>Duration </th>
               <th>Status</th>
-              <th>Method</th>
-              <th>Endpoint</th>
             </tr>
           </thead>
           <tbody>
@@ -91,6 +90,9 @@ export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) =>
             ) : currentItems.length > 0 ? (
               currentItems.map((call, index) => (
                 <tr key={call.id}>
+                  <td>
+                    <span className={`method-badge ${call.name}`}>{call.name}</span>
+                  </td>
                   <td className="time-cell">{call.timestamp.toLocaleString()}</td>
                   <td className="time-cell">
                     {new Date(call.timestamp.getTime() + call.responseTime).toLocaleString()}
@@ -103,10 +105,6 @@ export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) =>
                       {call.status} {call.status >= 200 && call.status < 400 ? "(SUCCESS)" : "(FAILURE)"}
                     </span>
                   </td>
-                  <td>
-                    <span className={`method-badge ${call.method.toLowerCase()}`}>{call.method}</span>
-                  </td>
-                  <td className="endpoint-cell">{call.endpoint}</td>
                 </tr>
               ))
             ) : (
