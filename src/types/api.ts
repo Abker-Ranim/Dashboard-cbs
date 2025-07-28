@@ -3,10 +3,9 @@ export interface ApiCall {
   id: string;
   timestamp: Date; // Mappé depuis startTime ou endTime
   method: string;  // Mappé depuis httpMethod
-  endpoint: string; // Mappé depuis httpUrl
   status: number;  // Mappé depuis status ou httpStatusCode converti
   responseTime: number; // Mappé depuis durationMs
-  name?: string;
+  name: string;
 }
   export interface ApiStats {
     totalRequests: number;
