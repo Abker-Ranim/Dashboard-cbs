@@ -1,7 +1,6 @@
 // src/components/ApiSupervisionDashboard.tsx
 import React from "react";
 import { MetricsGrid } from "./MetricsGrid";
-import { ChartsGrid } from "./ChartsGrid";
 import { ApiTable } from "./ApiTable";
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardFooter } from "./DashboardFooter";
@@ -31,7 +30,6 @@ const ApiSupervisionDashboard: React.FC = () => {
       <div className="dashboard-content">
         <DashboardHeader />
         <MetricsGrid stats={stats} />
-        <ChartsGrid chartData={chartData} />
         <div className="charts-grid">
           <div className="chart-card">
             <div className="chart-header">
@@ -46,7 +44,7 @@ const ApiSupervisionDashboard: React.FC = () => {
                   stats.serverErrors,
                   stats.errorRequests - stats.clientErrors - stats.serverErrors,
                 ]}
-                colors={["#10B981", "#F59E0B", "#EF4444", "#6B7280"]}
+                colors={["#10b926", "#F59E0B", "#EF4444", "#6B7280"]}
                 labels={["2xx Success", "4xx Client", "5xx Server", "Others"]}
               />
             </div>
