@@ -30,12 +30,15 @@ const ApiSupervisionDashboard: React.FC = () => {
       <div className="dashboard-content">
         <DashboardHeader />
         <MetricsGrid stats={stats} />
+        <RequestEvolutionChart />
+
         <div className="charts-grid">
           <div className="chart-card">
             <div className="chart-header">
               <h3 className="chart-title">HTTP Status Distribution</h3>
               <p className="chart-description">Distribution of response codes</p>
             </div>
+            
             <div className="chart-content">
               <DonutChart
                 data={[
@@ -92,7 +95,6 @@ const ApiSupervisionDashboard: React.FC = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 gap-6">
-            <RequestEvolutionChart />
             <ApiCorrelation2D />
           </div>
         <ApiTable apiCalls={apiCalls} />
