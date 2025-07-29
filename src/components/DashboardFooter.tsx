@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/dashboard.css";
+import "../styles/footer.css"; 
 
 export const DashboardFooter: React.FC = () => {
   return (
