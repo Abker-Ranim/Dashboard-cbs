@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { TrendingUp, TrendingDown, Activity, Clock } from "lucide-react";
 import "../styles/RequestEvolutionChart.css";
@@ -9,39 +8,51 @@ interface RequestEvolutionChartProps {
   timeRange?: "24h" | "7d" | "30d";
 }
 
-export const RequestEvolutionChart = ({ timeRange = "24h" }: RequestEvolutionChartProps) => {
+export const RequestEvolutionChart = ({
+  timeRange = "24h",
+}: RequestEvolutionChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [data, setData] = useState<EvolutionDataPoint[]>([]);
-  const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; data: EvolutionDataPoint } | null>(null);
+  const [hoveredPoint, setHoveredPoint] = useState<{
+    x: number;
+    y: number;
+    data: EvolutionDataPoint;
+  } | null>(null);
   const [animationProgress, setAnimationProgress] = useState(0);
   const [selectedTimeRange, setSelectedTimeRange] = useState(timeRange);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Récupération des données depuis le backend
-useEffect(() => {
-  const loadData = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetchEvolutionData(selectedTimeRange);
-      console.log("Raw response:", response); // Débogage
-      const adjustedData = response.data.map((item: EvolutionDataPoint) => ({
-        ...item,
-        time: formatTime(item.time, selectedTimeRange),
-      }));
-      console.log("Adjusted data:", adjustedData); // Débogage
-      setData(adjustedData);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load data");
-      setData([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetchEvolutionData(selectedTimeRange);
+        console.log("Raw response:", response); // Débogage
+        const adjustedData = response.data
+          .map((item: EvolutionDataPoint) => ({
+            ...item,
+            time: formatTime(item.time, selectedTimeRange),
+            rawTime: item.time, // Stocker le temps brut pour le tri
+          }))
+          .sort(
+            (a, b) =>
+              new Date(a.rawTime).getTime() - new Date(b.rawTime).getTime()
+          ); // Tri par temps
+        console.log("Adjusted data:", adjustedData); // Débogage
+        setData(adjustedData);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load data");
+        setData([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  loadData();
-}, [selectedTimeRange]);
+    loadData();
+  }, [selectedTimeRange]);
   // Fonction pour formater le temps selon la plage
   const formatTime = (timeStr: string, range: string) => {
     const date = new Date(timeStr);
@@ -77,7 +88,9 @@ useEffect(() => {
     const padding = { top: 20, right: 40, bottom: 60, left: 60 };
     const chartWidth = rect.width - padding.left - padding.right;
 
-    const pointIndex = Math.round(((x - padding.left) / chartWidth) * (data.length - 1));
+    const pointIndex = Math.round(
+      ((x - padding.left) / chartWidth) * (data.length - 1)
+    );
     if (pointIndex >= 0 && pointIndex < data.length) {
       setHoveredPoint({
         x: x,
@@ -149,7 +162,12 @@ useEffect(() => {
       ctx.fillText(data[i].time, x, height - padding.bottom + 20);
     }
 
-    const drawCurve = (values: number[], color: string, fillColor: string, animated = true) => {
+    const drawCurve = (
+      values: number[],
+      color: string,
+      fillColor: string,
+      animated = true
+    ) => {
       if (values.length === 0) return;
 
       const points = values.map((value, index) => ({
@@ -157,7 +175,9 @@ useEffect(() => {
         y: padding.top + chartHeight - (value / maxValue) * chartHeight,
       }));
 
-      const animatedPoints = animated ? points.slice(0, Math.floor(points.length * animationProgress)) : points;
+      const animatedPoints = animated
+        ? points.slice(0, Math.floor(points.length * animationProgress))
+        : points;
 
       if (animatedPoints.length < 2) return;
 
@@ -173,10 +193,18 @@ useEffect(() => {
           ctx.bezierCurveTo(cpx1, prevPoint.y, cpx2, point.y, point.x, point.y);
         }
       });
-      ctx.lineTo(animatedPoints[animatedPoints.length - 1].x, height - padding.bottom);
+      ctx.lineTo(
+        animatedPoints[animatedPoints.length - 1].x,
+        height - padding.bottom
+      );
       ctx.closePath();
 
-      const gradient = ctx.createLinearGradient(0, padding.top, 0, height - padding.bottom);
+      const gradient = ctx.createLinearGradient(
+        0,
+        padding.top,
+        0,
+        height - padding.bottom
+      );
       gradient.addColorStop(0, fillColor);
       gradient.addColorStop(1, fillColor.replace(/[\d.]+\)$/g, "0)"));
       ctx.fillStyle = gradient;
@@ -222,12 +250,12 @@ useEffect(() => {
     drawCurve(
       data.map((d) => d.success),
       "#10B981",
-      "rgba(16, 185, 129, 0.3)",
+      "rgba(16, 185, 129, 0.3)"
     );
     drawCurve(
       data.map((d) => d.errors),
       "#EF4444",
-      "rgba(239, 68, 68, 0.3)",
+      "rgba(239, 68, 68, 0.3)"
     );
 
     const legendY = height - 30;
@@ -248,14 +276,20 @@ useEffect(() => {
   const totalRequests = data.reduce((sum, d) => sum + d.total, 0);
   const totalSuccess = data.reduce((sum, d) => sum + d.success, 0);
   const totalErrors = data.reduce((sum, d) => sum + d.errors, 0);
-  const successRate = totalRequests > 0 ? (totalSuccess / totalRequests) * 100 : 0;
+  const successRate =
+    totalRequests > 0 ? (totalSuccess / totalRequests) * 100 : 0;
   const errorRate = totalRequests > 0 ? (totalErrors / totalRequests) * 100 : 0;
 
   const midPoint = Math.floor(data.length / 2);
-  const firstHalf = data.slice(0, midPoint).reduce((sum, d) => sum + d.total, 0) / midPoint;
-  const secondHalf = data.slice(midPoint).reduce((sum, d) => sum + d.total, 0) / (data.length - midPoint);
+  const firstHalf =
+    data.slice(0, midPoint).reduce((sum, d) => sum + d.total, 0) / midPoint;
+  const secondHalf =
+    data.slice(midPoint).reduce((sum, d) => sum + d.total, 0) /
+    (data.length - midPoint);
   const trend = secondHalf > firstHalf ? "up" : "down";
-  const trendPercentage = Math.abs(((secondHalf - firstHalf) / firstHalf) * 100);
+  const trendPercentage = Math.abs(
+    ((secondHalf - firstHalf) / firstHalf) * 100
+  );
 
   if (isLoading) {
     return (
@@ -285,7 +319,9 @@ useEffect(() => {
                 <Activity className="h-5 w-5" />
                 Évolution des Requêtes
               </h3>
-              <p className="chart-description" style={{ color: "red" }}>{error}</p>
+              <p className="chart-description" style={{ color: "red" }}>
+                {error}
+              </p>
             </div>
           </div>
         </div>
@@ -302,17 +338,28 @@ useEffect(() => {
               <Activity className="h-5 w-5" />
               Évolution des Requêtes
             </h3>
-            <p className="chart-description">Analyse temporelle des succès et échecs</p>
+            <p className="chart-description">
+              Analyse temporelle des succès et échecs
+            </p>
           </div>
 
           <div className="time-selector">
-            <button className={selectedTimeRange === "24h" ? "active" : ""} onClick={() => setSelectedTimeRange("24h")}>
+            <button
+              className={selectedTimeRange === "24h" ? "active" : ""}
+              onClick={() => setSelectedTimeRange("24h")}
+            >
               24h
             </button>
-            <button className={selectedTimeRange === "7d" ? "active" : ""} onClick={() => setSelectedTimeRange("7d")}>
+            <button
+              className={selectedTimeRange === "7d" ? "active" : ""}
+              onClick={() => setSelectedTimeRange("7d")}
+            >
               7j
             </button>
-            <button className={selectedTimeRange === "30d" ? "active" : ""} onClick={() => setSelectedTimeRange("30d")}>
+            <button
+              className={selectedTimeRange === "30d" ? "active" : ""}
+              onClick={() => setSelectedTimeRange("30d")}
+            >
               30j
             </button>
           </div>
@@ -341,7 +388,11 @@ useEffect(() => {
 
           <div className="stat-item trend">
             <div className="stat-icon">
-              {trend === "up" ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+              {trend === "up" ? (
+                <TrendingUp className="h-4 w-4" />
+              ) : (
+                <TrendingDown className="h-4 w-4" />
+              )}
             </div>
             <div className="stat-content">
               <div className={`stat-value ${trend}`}>
@@ -392,7 +443,9 @@ useEffect(() => {
                 <span className="dot"></span>
                 Erreurs: {hoveredPoint.data.errors}
               </div>
-              <div className="tooltip-total">Total: {hoveredPoint.data.total}</div>
+              <div className="tooltip-total">
+                Total: {hoveredPoint.data.total}
+              </div>
             </div>
           </div>
         )}
@@ -403,7 +456,9 @@ useEffect(() => {
           <div className="insight-icon">📈</div>
           <div className="insight-content">
             <div className="insight-title">Pic d'activité</div>
-            <div className="insight-text">Maximum de {Math.max(...data.map((d) => d.total))} requêtes/h</div>
+            <div className="insight-text">
+              Maximum de {Math.max(...data.map((d) => d.total))} requêtes/h
+            </div>
           </div>
         </div>
 
@@ -412,7 +467,11 @@ useEffect(() => {
           <div className="insight-content">
             <div className="insight-title">Performance</div>
             <div className="insight-text">
-              {successRate > 95 ? "Excellente" : successRate > 90 ? "Bonne" : "À améliorer"}
+              {successRate > 95
+                ? "Excellente"
+                : successRate > 90
+                ? "Bonne"
+                : "À améliorer"}
             </div>
           </div>
         </div>
@@ -421,7 +480,13 @@ useEffect(() => {
           <div className="insight-icon">🎯</div>
           <div className="insight-content">
             <div className="insight-title">Stabilité</div>
-            <div className="insight-text">{errorRate < 5 ? "Très stable" : errorRate < 10 ? "Stable" : "Instable"}</div>
+            <div className="insight-text">
+              {errorRate < 5
+                ? "Très stable"
+                : errorRate < 10
+                ? "Stable"
+                : "Instable"}
+            </div>
           </div>
         </div>
       </div>
