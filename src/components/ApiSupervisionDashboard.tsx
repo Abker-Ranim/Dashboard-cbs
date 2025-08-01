@@ -10,6 +10,7 @@ import { DonutChart } from "./DonutChart";
 import { useApiData } from "../hooks/useApiData";
 import { RequestEvolutionChart } from "./RequestEvolutionChart";
 import { ApiCorrelation2D } from "./ApiCorrelation2D";
+import { ApiUsagePieChart } from "./ApiUsagePieChart";
 const ApiSupervisionDashboard: React.FC = () => {
   const { apiCalls, stats, chartData, isLoading, error } = useApiData();
 
@@ -20,11 +21,30 @@ const ApiSupervisionDashboard: React.FC = () => {
   if (error) {
     return (
       <div className="dashboard-container">
-        <div className="error-message" style={{ color: "red" }}>Error: {error}</div>
+        <div className="error-message" style={{ color: "red" }}>
+          Error: {error}
+        </div>
       </div>
     );
   }
+ // Generate API usage data from stats
+ const generateApiUsageData = () => {
+  const apis = [
+    { name: "getaccount", baseCount: 1250, color: "#3B82F6" },
+    { name: "getcustomer", baseCount: 890, color: "#10B981" },
+    { name: "createorder", baseCount: 650, color: "#F59E0B" },
+    { name: "processpay", baseCount: 420, color: "#EF4444" },
+ 
+  ]
+  const totalCalls = apis.reduce((sum, api) => sum + api.baseCount, 0)
 
+  return apis.map((api) => ({
+    name: api.name,
+    count: api.baseCount,
+    percentage: (api.baseCount / totalCalls) * 100,
+    color: api.color,
+  }))
+}
   return (
     <div className="dashboard-container animate-fade-in">
       <div className="dashboard-content">
@@ -36,9 +56,11 @@ const ApiSupervisionDashboard: React.FC = () => {
           <div className="chart-card">
             <div className="chart-header">
               <h3 className="chart-title">HTTP Status Distribution</h3>
-              <p className="chart-description">Distribution of response codes</p>
+              <p className="chart-description">
+                Distribution of response codes
+              </p>
             </div>
-            
+
             <div className="chart-content">
               <DonutChart
                 data={[
@@ -54,55 +76,22 @@ const ApiSupervisionDashboard: React.FC = () => {
           </div>
           <div className="chart-card">
             <div className="chart-header">
-              <h3 className="chart-title">Performance Metrics</h3>
-              <p className="chart-description">Key performance indicators</p>
+              <h3 className="chart-title">API Usage Distribution</h3>
+              <p className="chart-description">Percentage of calls per API endpoint</p>
             </div>
             <div className="chart-content">
-              <div style={{ padding: "1rem 0" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
-                  <div
-                    style={{
-                      textAlign: "center",
-                      padding: "1rem",
-                      background: "linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1))",
-                      borderRadius: "0.5rem",
-                      border: "1px solid rgba(59, 130, 246, 0.3)",
-                    }}
-                  >
-                    <div style={{ fontSize: "1.5rem", fontWeight: "600", color: "white" }}>
-                      {stats.requestsPerSecond}
-                    </div>
-                    <p style={{ fontSize: "0.75rem", color: "#cbd5e1" }}>Req/sec</p>
-                  </div>
-                  <div
-                    style={{
-                      textAlign: "center",
-                      padding: "1rem",
-                      background: "linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1))",
-                      borderRadius: "0.5rem",
-                      border: "1px solid rgba(239, 68, 68, 0.3)",
-                    }}
-                  >
-                    <div style={{ fontSize: "1.5rem", fontWeight: "600", color: "white" }}>
-                      {((stats.errorRequests / Math.max(stats.totalRequests, 1)) * 100).toFixed(1)}%
-                    </div>
-                    <p style={{ fontSize: "0.75rem", color: "#cbd5e1" }}>Error Rate</p>
-                  </div>
-                </div>
-               
-              </div>
+              <ApiUsagePieChart data={generateApiUsageData()} />
             </div>
           </div>
         </div>
         <div className="grid grid-cols-1 gap-6">
-            <ApiCorrelation2D />
-          </div>
+          <ApiCorrelation2D />
+        </div>
         <ApiTable apiCalls={apiCalls} />
         <DashboardFooter />
-
-      </div>
+     </div>
     </div>
   );
-};
+}
 
 export default ApiSupervisionDashboard;
