@@ -55,7 +55,7 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
 
     return data.map((item, index) => ({
       name: item.name,
-      color: [  "rgba(244, 244, 21, 0.72)",   // #f59e0b
+      color: [  "rgba(254, 165, 0, 0.72)",   // #f59e0b
         "rgba(239, 68, 68, 0.62)",    // #f13737
         "rgba(60, 255, 60, 0.73)",    // #10b951
         "rgba(11, 77, 245, 0.7)",    // #0b4df5
