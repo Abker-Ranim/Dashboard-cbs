@@ -11,8 +11,9 @@ import { useApiData } from "../hooks/useApiData";
 import { RequestEvolutionChart } from "./RequestEvolutionChart";
 import { ApiCorrelation2D } from "./ApiCorrelation2D";
 import { ApiUsagePieChart } from "./ApiUsagePieChart";
+
 const ApiSupervisionDashboard: React.FC = () => {
-  const { apiCalls, stats, chartData, isLoading, error } = useApiData();
+  const { apiCalls, stats, chartData, usageData, isLoading, error } = useApiData();
 
   if (isLoading) {
     return <div className="dashboard-container">Loading...</div>;
@@ -27,24 +28,7 @@ const ApiSupervisionDashboard: React.FC = () => {
       </div>
     );
   }
- // Generate API usage data from stats
- const generateApiUsageData = () => {
-  const apis = [
-    { name: "getaccount", baseCount: 1250, color: "#3B82F6" },
-    { name: "getcustomer", baseCount: 890, color: "#10B981" },
-    { name: "createorder", baseCount: 650, color: "#F59E0B" },
-    { name: "processpay", baseCount: 420, color: "#EF4444" },
- 
-  ]
-  const totalCalls = apis.reduce((sum, api) => sum + api.baseCount, 0)
 
-  return apis.map((api) => ({
-    name: api.name,
-    count: api.baseCount,
-    percentage: (api.baseCount / totalCalls) * 100,
-    color: api.color,
-  }))
-}
   return (
     <div className="dashboard-container animate-fade-in">
       <div className="dashboard-content">
@@ -56,11 +40,8 @@ const ApiSupervisionDashboard: React.FC = () => {
           <div className="chart-card">
             <div className="chart-header">
               <h3 className="chart-title">HTTP Status Distribution</h3>
-              <p className="chart-description">
-                Distribution of response codes
-              </p>
+              <p className="chart-description">Distribution of response codes</p>
             </div>
-
             <div className="chart-content">
               <DonutChart
                 data={[
@@ -69,7 +50,7 @@ const ApiSupervisionDashboard: React.FC = () => {
                   stats.serverErrors,
                   stats.errorRequests - stats.clientErrors - stats.serverErrors,
                 ]}
-                colors={["#10b926", "#F59E0B", "#EF4444", "#6B7280"]}
+                colors={["#10B981", "#F59E0B", "#EF4444", "#6B7280"]}
                 labels={["2xx Success", "4xx Client", "5xx Server", "Others"]}
               />
             </div>
@@ -80,7 +61,7 @@ const ApiSupervisionDashboard: React.FC = () => {
               <p className="chart-description">Percentage of calls per API endpoint</p>
             </div>
             <div className="chart-content">
-              <ApiUsagePieChart data={generateApiUsageData()} />
+              <ApiUsagePieChart data={usageData} />
             </div>
           </div>
         </div>
@@ -89,9 +70,9 @@ const ApiSupervisionDashboard: React.FC = () => {
         </div>
         <ApiTable apiCalls={apiCalls} />
         <DashboardFooter />
-     </div>
+      </div>
     </div>
   );
-}
+};
 
 export default ApiSupervisionDashboard;
