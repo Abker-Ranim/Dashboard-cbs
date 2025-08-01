@@ -1,17 +1,21 @@
-// src/services/traceTableService.ts
 import { ApiCall } from "../types/api";
 
 export const fetchTableData = async (): Promise<ApiCall[]> => {
   try {
-    const response = await fetch("http://localhost:8090/api/traces", {
+    const baseUrl = process.env.REACT_APP_API_URL  // Valeur par défaut si non défini
+    const url = `${baseUrl}/traces`;
+
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     });
+
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
     const traceRecords: any[] = await response.json();
 
     if (!Array.isArray(traceRecords)) {
@@ -28,10 +32,8 @@ export const fetchTableData = async (): Promise<ApiCall[]> => {
       name: record.name || "Unnamed Request",
     }));
 
-    console.log("Fetched data:", mappedApiCalls); // Ajout pour débogage
     return mappedApiCalls;
   } catch (err) {
-    console.error("Error in fetchTableData:", err);
     throw err instanceof Error ? err : new Error("Failed to fetch trace data");
   }
 };

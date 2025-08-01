@@ -1,18 +1,10 @@
 // src/services/endpointCallService.ts
-export interface EndpointData {
-  total: number;
-  name: string;
-}
 
-export interface EndpointResponse {
-  data: EndpointData[];
-  status: number;
-}
 
 export const fetchEndpointCalls = async (timeRange: "24h" | "7d" | "30d"): Promise<EndpointResponse> => {
   try {
-    const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:8090";
-    const url = `${baseUrl}/api/endpoints?range=${timeRange}`;
+    const baseUrl = process.env.REACT_APP_API_URL;
+    const url = `${baseUrl}/endpoints?range=${timeRange}`;
 
     console.log("Fetching endpoint data from:", url);
 
