@@ -4,7 +4,8 @@ import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import { BarChart3, TrendingUp, Activity } from "lucide-react";
 import "../styles/ApiCorrelation2D.css";
-import { fetchEndpointCalls, EndpointData, EndpointResponse } from "../services/endpointCallService";
+import { fetchEndpointCalls } from "../services/endpointCallService";
+import { EndpointData } from "types/api";
 
 interface ApiCorrelation2DProps {
   className?: string;

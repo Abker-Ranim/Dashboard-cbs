@@ -1,5 +1,7 @@
 // src/services/endpointCallService.ts
 
+import { EndpointResponse } from "types/api";
+
 
 export const fetchEndpointCalls = async (timeRange: "24h" | "7d" | "30d"): Promise<EndpointResponse> => {
   try {
