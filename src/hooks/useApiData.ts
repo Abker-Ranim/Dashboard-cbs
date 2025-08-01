@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { ApiCall, ApiStats, ChartData } from "../types/api";
 import { fetchTableData } from "../services/traceTableService";
+import { ApiUsageData, generateApiUsageData } from "../services/apiUsageService";
 
 export const useApiData = () => {
   const [apiCalls, setApiCalls] = useState<ApiCall[]>([]);
@@ -23,6 +24,7 @@ export const useApiData = () => {
     responseTime: [],
     errorRate: [],
   });
+  const [usageData, setUsageData] = useState<ApiUsageData[]>([]); // Nouvel état pour les données d'utilisation
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,6 +42,9 @@ export const useApiData = () => {
         const serverErrors = data.filter(call => call.status >= 500).length;
         const errorRequests = totalRequests - successfulRequests;
         const averageResponseTime = data.reduce((sum, call) => sum + call.responseTime, 0) / totalRequests || 0;
+
+        // Calcul des données d'utilisation avec pourcentages
+        const usage = generateApiUsageData(data);
 
         setStats({
           totalRequests,
@@ -61,6 +66,7 @@ export const useApiData = () => {
           errorRate: Array(totalRequests).fill(0).map((_, i) => i % 5 === 0 ? 1 : 0),
         });
 
+        setUsageData(usage); // Stocke les données d'utilisation enrichies
         setIsLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch API data");
@@ -70,8 +76,7 @@ export const useApiData = () => {
     };
 
     fetchData(); // Appel unique au montage
-    // Supprimé setInterval pour éviter les rafraîchissements automatiques
   }, []); // Tableau de dépendances vide pour un effet unique
 
-  return { apiCalls, stats, chartData, isLoading, error };
+  return { apiCalls, stats, chartData, usageData, isLoading, error }; // Ajout de usageData au retour
 };
