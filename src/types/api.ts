@@ -36,3 +36,12 @@ export interface ApiCall {
     data: EvolutionDataPoint[];
     status: number;
   }
+  export interface EndpointData {
+    total: number;
+    name: string;
+  }
+  
+  export interface EndpointResponse {
+    data: EndpointData[];
+    status: number;
+  }
