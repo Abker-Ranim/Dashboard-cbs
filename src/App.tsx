@@ -1,4 +1,3 @@
-// src/App.tsx
 import React from "react";
 import ApiSupervisionDashboard from "./components/ApiSupervisionDashboard";
 import "./styles/globals.css";
