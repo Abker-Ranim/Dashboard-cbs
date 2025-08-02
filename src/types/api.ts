@@ -45,3 +45,20 @@ export interface ApiCall {
     data: EndpointData[];
     status: number;
   }
+
+  export interface ApiUsageData {
+    name: string;
+    count: number;
+    percentage: number;
+    color: string;
+  }
+
+  export interface DonutChartProps {
+    data: number[];
+    colors: string[];
+    labels: string[];
+  }
+
+  export interface RequestEvolutionChartProps {
+    timeRange?: "24h" | "7d" | "30d";
+  }
