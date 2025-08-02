@@ -3,11 +3,9 @@ import { useState, useRef, useEffect } from "react";
 import { BarChart3, TrendingUp, Activity } from "lucide-react";
 import "../styles/ApiCorrelation2D.css";
 import { fetchEndpointCalls } from "../services/endpointCallService";
-import { EndpointData } from "types/api";
+import { ApiCorrelation2DProps, EndpointData } from "types/api";
 
-interface ApiCorrelation2DProps {
-  className?: string;
-}
+
 
 export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);

@@ -27,7 +27,6 @@ export const RequestEvolutionChart = ({
       try {
         setIsLoading(true);
         const response = await fetchEvolutionData(selectedTimeRange);
-        console.log("Raw response:", response); // Débogage
         const adjustedData = response.data
           .map((item: EvolutionDataPoint) => ({
             ...item,
@@ -38,7 +37,6 @@ export const RequestEvolutionChart = ({
             (a, b) =>
               new Date(a.rawTime).getTime() - new Date(b.rawTime).getTime()
           ); // Tri par temps
-        console.log("Adjusted data:", adjustedData); // Débogage
         setData(adjustedData);
         setError(null);
       } catch (err) {

@@ -62,3 +62,6 @@ export interface ApiCall {
   export interface RequestEvolutionChartProps {
     timeRange?: "24h" | "7d" | "30d";
   }
+  export interface ApiCorrelation2DProps {
+    className?: string;
+  }

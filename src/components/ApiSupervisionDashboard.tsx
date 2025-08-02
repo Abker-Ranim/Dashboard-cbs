@@ -12,7 +12,7 @@ import { ApiCorrelation2D } from "./ApiCorrelation2D";
 import { ApiUsagePieChart } from "./ApiUsagePieChart";
 
 const ApiSupervisionDashboard: React.FC = () => {
-  const { apiCalls, stats, chartData, usageData, isLoading, error } = useApiData();
+  const { apiCalls, stats, usageData, isLoading, error } = useApiData();
 
   if (isLoading) {
     return <div className="dashboard-container">Loading...</div>;
