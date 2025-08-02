@@ -8,7 +8,6 @@ export const fetchEndpointCalls = async (timeRange: "24h" | "7d" | "30d"): Promi
     const baseUrl = process.env.REACT_APP_API_URL;
     const url = `${baseUrl}/endpoints?range=${timeRange}`;
 
-    console.log("Fetching endpoint data from:", url);
 
     const response = await fetch(url, {
       method: "GET",
@@ -24,7 +23,6 @@ export const fetchEndpointCalls = async (timeRange: "24h" | "7d" | "30d"): Promi
     }
 
     const data: EndpointResponse = await response.json();
-    console.log("Fetched endpoint data:", data);
     return data;
   } catch (error) {
     console.error("Error fetching endpoint data:", error);

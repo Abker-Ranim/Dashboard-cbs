@@ -52,13 +52,7 @@ export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) =>
   // Changement de page
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  // Ajout de logs pour le debug
-  console.log("displayCalls", displayCalls);
-  console.log("currentItems", currentItems);
-  console.log("isLoading", isLoading);
-  console.log("error", error);
-  console.log("currentPage", currentPage);
-  console.log("totalPages", totalPages);
+
 
   return (
     <div className="api-table-container">

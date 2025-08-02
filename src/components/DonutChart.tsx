@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+import type { DonutChartProps } from "../types/api";
 
-interface DonutChartProps {
-  data: number[];
-  colors: string[];
-  labels: string[];
-}
+
 
 export const DonutChart: React.FC<DonutChartProps> = ({ data, colors, labels }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
