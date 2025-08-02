@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { TrendingUp, TrendingDown, Activity, Clock } from "lucide-react";
 import "../styles/RequestEvolutionChart.css";
-import type { EvolutionDataPoint } from "../types/api";
+import type { EvolutionDataPoint, RequestEvolutionChartProps } from "../types/api";
 import { fetchEvolutionData } from "../services/requestEvolutionService";
 
-interface RequestEvolutionChartProps {
-  timeRange?: "24h" | "7d" | "30d";
-}
+
 
 export const RequestEvolutionChart = ({
   timeRange = "24h",

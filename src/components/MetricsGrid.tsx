@@ -1,8 +1,10 @@
-import React from "react";
-import { Globe, Clock, TrendingUp, Activity } from "lucide-react";
+import { Globe, Clock, TrendingUp } from "lucide-react";
 import type { ApiStats } from "../types/api";
 import "../styles/metrics-grid.css";
-import { formatResponseTime } from "../utils/formatters";
+
+const formatResponseTime = (ms: number): string => {
+  return `${ms} ms`;
+};
 
 interface MetricsGridProps {
   stats: ApiStats;

@@ -1,4 +1,3 @@
-// src/components/ApiSupervisionDashboard.tsx
 import React from "react";
 import { MetricsGrid } from "./MetricsGrid";
 import { ApiTable } from "./ApiTable";

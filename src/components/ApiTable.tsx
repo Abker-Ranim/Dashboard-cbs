@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Globe, Server } from "lucide-react";
 import type { ApiCall } from "../types/api";
-import { formatResponseTime } from "../utils/formatters"; 
 import "../styles/api-table.css";
 import { fetchTableData } from "../services/traceTableService";
 
+const formatResponseTime = (ms: number): string => {
+  return `${ms} ms`;
+};
 interface ApiTableProps {
-  apiCalls?: ApiCall[]; // Prop optionnelle
+  apiCalls?: ApiCall[]; 
 }
 
 export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) => {
@@ -14,7 +16,7 @@ export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) =>
   const [isLoading, setIsLoading] = useState(!propApiCalls);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Nombre d'éléments par page
+  const itemsPerPage = 5; 
 
   useEffect(() => {
     if (propApiCalls) {

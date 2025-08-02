@@ -1,14 +1,8 @@
-// src/components/ApiUsagePieChart.tsx
 import type React from "react";
 import { useRef, useEffect, useState } from "react";
 import "../styles/ApiUsagePieChart.css";
+import { ApiUsageData } from "types/api";
 
-interface ApiUsageData {
-  name: string;
-  count: number;
-  percentage: number;
-  color: string;
-}
 
 interface ApiUsagePieChartProps {
   data?: ApiUsageData[];
