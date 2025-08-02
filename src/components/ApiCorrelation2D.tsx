@@ -86,7 +86,6 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
     const apiData = prepareApiData();
     const filteredData = selectedApi === "all" ? apiData : apiData.filter((api) => api.name === selectedApi);
     const maxValue = Math.max(...filteredData.flatMap((api) => api.data));
-    const minValue = 0;
 
     ctx.strokeStyle = "rgba(148, 163, 184, 0.13)";
     ctx.lineWidth = 1;
@@ -221,7 +220,6 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
   };
 
   const totalCalls = data.reduce((sum, d) => sum + d.total, 0);
-  const avgPerPeriod = data.length > 0 ? Math.round(totalCalls / data.length) : 0;
 
   if (isLoading) {
     return (
