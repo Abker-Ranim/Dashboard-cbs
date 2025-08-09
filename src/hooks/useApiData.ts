@@ -33,7 +33,6 @@ export const useApiData = () => {
       try {
         setIsLoading(true);
         const data = await fetchTableData();
-        console.log("useApiData - Fetched Data:", data); // Pour débogage
         setApiCalls(data);
 
         const totalRequests = data.length;
@@ -70,7 +69,6 @@ export const useApiData = () => {
         setIsLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch API data");
-        console.error("Fetch error:", err);
         setIsLoading(false);
       }
     };

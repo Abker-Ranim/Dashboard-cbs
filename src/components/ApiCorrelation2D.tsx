@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, BarElement, PointElement, LineElement, Tooltip, LinearScale, CategoryScale } from "chart.js";
-import { Activity, BarChart3, TrendingUp } from "lucide-react";
+import { Activity} from "lucide-react";
 import "../styles/ApiCorrelation2D.css";
 import { fetchEndpointCalls } from "../services/endpointCallService";
 import { ApiCorrelation2DProps, EndpointData } from "types/api";
