@@ -25,35 +25,19 @@ export const Chart: React.FC<ChartProps> = ({ stats, usageData }) => {
   });
 
   const getChartData = (variant: "http-status" | "api-usage") => {
-    if (variant === "http-status") {
-      const config = getHttpStatusData(stats);
-      return {
-        labels: config.labels,
-        datasets: [
-          {
-            data: config.data,
-            backgroundColor: config.colors,
-            borderColor: config.colors.map((color) => color.replace("0.8", "1")),
-            borderWidth: 2,
-            hoverOffset: 12,
-          },
-        ],
-      };
-    } else {
-      const config = getApiUsageData(usageData);
-      return {
-        labels: config.labels,
-        datasets: [
-          {
-            data: config.data,
-            backgroundColor: config.colors,
-            borderColor: config.colors.map((color) => color.replace("0.8", "1")),
-            borderWidth: 2,
-            hoverOffset: 12,
-          },
-        ],
-      };
-    }
+    const config = variant === "http-status" ? getHttpStatusData(stats) : getApiUsageData(usageData);
+    return {
+      labels: config.labels,
+      datasets: [
+        {
+          data: config.data,
+          backgroundColor: config.colors,
+          borderColor: config.data.map(() => "#ffffff"), // White border for all segments
+          borderWidth: 2,
+          hoverOffset: 12,
+        },
+      ],
+    };
   };
 
   const chartOptions = (variant: "http-status" | "api-usage") => ({
