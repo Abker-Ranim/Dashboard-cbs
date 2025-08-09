@@ -1,24 +1,23 @@
-import type React from "react";
-import { useState, useRef, useEffect } from "react";
-import { BarChart3, TrendingUp, Activity } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Bar, Scatter } from "react-chartjs-2";
+import { Chart as ChartJS, BarElement, PointElement, LineElement, Tooltip, LinearScale, CategoryScale } from "chart.js";
+import { Activity, BarChart3, TrendingUp } from "lucide-react";
 import "../styles/ApiCorrelation2D.css";
 import { fetchEndpointCalls } from "../services/endpointCallService";
 import { ApiCorrelation2DProps, EndpointData } from "types/api";
 
-
+// Register Chart.js components
+ChartJS.register(BarElement, PointElement, LineElement, Tooltip, LinearScale, CategoryScale);
 
 export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<"24h" | "7d" | "30d">("24h");
   const [selectedApi, setSelectedApi] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grouped" | "lines">("grouped");
-  const [hoveredPoint, setHoveredPoint] = useState<{ api: string; index: number; value: number } | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [data, setData] = useState<EndpointData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Récupérer les données depuis le backend
+  // Fetch data from backend
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -33,229 +32,83 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
         setIsLoading(false);
       }
     };
-
     loadData();
   }, [selectedPeriod]);
 
-  // Formater la valeur
+  // Format value for display
   const formatValue = (value: number): string => {
     if (!isFinite(value) || isNaN(value)) return "0";
-    if (value >= 1000) {
-      return `${(value / 1000).toFixed(1)}k`;
-    }
+    if (value >= 1000) return `${(value / 1000).toFixed(1)}k`;
     return value.toString();
   };
 
-  // Préparer les données pour le graphique avec un seul point par endpoint
-  const prepareApiData = (): { name: string; color: string; data: number[] }[] => {
-    if (data.length === 0) return [];
-
-    return data.map((item, index) => ({
+  // Prepare chart data
+  const prepareChartData = () => {
+    const apiData = data.map((item, index) => ({
       name: item.name,
-      color: [  "rgba(254, 165, 0, 0.72)",   // #f59e0b
-        "rgba(239, 68, 68, 0.62)",    // #f13737
-        "rgba(60, 255, 60, 0.73)",    // #10b951
-        "rgba(11, 77, 245, 0.7)",    // #0b4df5
-        "rgba(11, 77, 245, 0.7)"][index % 5],
-      data: [item.total], // Un seul point par endpoint
+      color: ["rgba(254, 165, 0, 0.72)", "rgba(239, 68, 68, 0.62)", "rgba(60, 255, 60, 0.73)", "rgba(11, 77, 245, 0.7)"][index % 4],
+      total: item.total,
     }));
-  };
 
-  const drawChart = () => {
-    const canvas = canvasRef.current;
-    if (!canvas || isLoading) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
-
-    const width = rect.width;
-    const height = rect.height;
-    const padding = { top: 40, right: 40, bottom: 60, left: 80 };
-    const chartWidth = width - padding.left - padding.right;
-    const chartHeight = height - padding.top - padding.bottom;
-
-    ctx.fillStyle = "rgba(195, 203, 222, 0)";
-    ctx.fillRect(0, 0, width, height);
-
-    const apiData = prepareApiData();
     const filteredData = selectedApi === "all" ? apiData : apiData.filter((api) => api.name === selectedApi);
-    
-    // Handle empty data case
-    if (filteredData.length === 0) {
-      // Draw empty chart with grid lines only
-      ctx.strokeStyle = "rgba(148, 163, 184, 0.13)";
-      ctx.lineWidth = 1;
 
-      for (let i = 0; i <= 5; i++) {
-        const y = padding.top + (chartHeight / 5) * i;
-        ctx.beginPath();
-        ctx.moveTo(padding.left, y);
-        ctx.lineTo(padding.left + chartWidth, y);
-        ctx.stroke();
-      }
-
-      ctx.fillStyle = "rgba(203, 213, 225, 0.9)";
-      ctx.font = "14px Inter, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("Aucune donnée disponible", width / 2, height / 2);
-      ctx.fillText("Endpoints", width / 2, height - 10);
-
-      ctx.save();
-      ctx.translate(20, height / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillText("Nombre total d'appels", 0, 0);
-      ctx.restore();
-      return;
-    }
-
-    const maxValue = Math.max(...filteredData.flatMap((api) => api.data));
-
-    ctx.strokeStyle = "rgba(148, 163, 184, 0.13)";
-    ctx.lineWidth = 1;
-
-    for (let i = 0; i <= 5; i++) {
-      const y = padding.top + (chartHeight / 5) * i;
-      ctx.beginPath();
-      ctx.moveTo(padding.left, y);
-      ctx.lineTo(padding.left + chartWidth, y);
-      ctx.stroke();
-
-      const value = maxValue - (maxValue / 5) * i;
-      ctx.fillStyle = "rgba(203, 213, 225, 0.85)";
-      ctx.font = "12px Inter, sans-serif";
-      ctx.textAlign = "right";
-      ctx.fillText(formatValue(Math.round(value)), padding.left - 10, y + 4);
-    }
-
-    const dataPoints = filteredData.length; // Nombre d'endpoints
-    const barWidth = chartWidth / (dataPoints > 0 ? dataPoints : 1);
-
-    for (let i = 0; i <= dataPoints; i++) {
-      const x = padding.left + i * barWidth;
-      ctx.beginPath();
-      ctx.moveTo(x, padding.top);
-      ctx.lineTo(x, padding.top + chartHeight);
-      ctx.stroke();
-    }
-
-    if (viewMode === "grouped") {
-      drawGroupedBars(ctx, filteredData, padding, chartWidth, chartHeight, maxValue, barWidth);
-    } else {
-      drawLines(ctx, filteredData, padding, chartWidth, chartHeight, maxValue, barWidth);
-    }
-
-    ctx.fillStyle = "rgba(203, 213, 225, 0.9)";
-    ctx.font = "14px Inter, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Endpoints", width / 2, height - 10);
-
-    ctx.save();
-    ctx.translate(20, height / 2);
-    ctx.rotate(-Math.PI / 2);
-    ctx.fillText("Nombre total d'appels", 0, 0);
-    ctx.restore();
+    return {
+      labels: filteredData.map((api) => api.name),
+      datasets: [
+        {
+          label: "", // Empty label to remove title
+          data: filteredData.map((api) => (viewMode === "grouped" ? api.total : { x: api.name, y: api.total })),
+          backgroundColor: filteredData.map((api) => api.color),
+          borderColor: filteredData.map((api) => api.color.replace(/0\.\d+/, "1")),
+          borderWidth: viewMode === "grouped" ? 1 : 2,
+          barPercentage: 0.8,
+          pointRadius: viewMode === "lines" ? 4 : 0,
+          pointHoverRadius: viewMode === "lines" ? 6 : 0,
+        },
+      ],
+    };
   };
 
-  const drawGroupedBars = (
-    ctx: CanvasRenderingContext2D,
-    data: { name: string; color: string; data: number[] }[],
-    padding: any,
-    chartWidth: number,
-    chartHeight: number,
-    maxValue: number,
-    barWidth: number,
-  ) => {
-    if (maxValue === 0) return; // Don't draw bars if maxValue is 0
-    
-    data.forEach((api, index) => {
-      const value = api.data[0];
-      const x = padding.left + index * barWidth;
-      const barHeight = (value / maxValue) * chartHeight;
-      const y = padding.top + chartHeight - barHeight;
-
-      ctx.fillStyle = api.color;
-      ctx.fillRect(x, y, barWidth * 0.8, barHeight);
-
-      ctx.strokeStyle = api.color;
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x, y, barWidth * 0.8, barHeight);
-    });
-  };
-
-  const drawLines = (
-    ctx: CanvasRenderingContext2D,
-    data: { name: string; color: string; data: number[] }[],
-    padding: any,
-    chartWidth: number,
-    chartHeight: number,
-    maxValue: number,
-    barWidth: number,
-  ) => {
-    if (maxValue === 0) return; // Don't draw lines if maxValue is 0
-    
-    data.forEach((api, index) => {
-      const value = api.data[0];
-      const x = padding.left + index * barWidth;
-      const y = padding.top + chartHeight - (value / maxValue) * chartHeight;
-
-      ctx.beginPath();
-      ctx.arc(x, y, 4, 0, 2 * Math.PI);
-      ctx.fillStyle = api.color;
-      ctx.fill();
-      ctx.strokeStyle = "#1e293b";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    });
-  };
-
-  useEffect(() => {
-    drawChart();
-  }, [data, selectedApi, viewMode, isLoading]);
-
-  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    setMousePos({ x: e.clientX, y: e.clientY });
-
-    const padding = { top: 40, right: 40, bottom: 60, left: 80 };
-    const chartWidth = rect.width - padding.left - padding.right;
-
-    if (
-      x >= padding.left &&
-      x <= padding.left + chartWidth &&
-      y >= padding.top &&
-      y <= padding.top + (rect.height - padding.top - padding.bottom)
-    ) {
-      const apiData = prepareApiData();
-      // Check if there's data before trying to access it
-      if (apiData.length > 0) {
-        const index = Math.floor((x - padding.left) / (chartWidth / apiData.length));
-        if (index >= 0 && index < apiData.length) {
-          const api = apiData[index];
-          if (api) {
-            setHoveredPoint({
-              api: api.name,
-              index: index,
-              value: api.data[0],
-            });
-          }
-        }
-      }
-    } else {
-      setHoveredPoint(null);
-    }
+  // Chart options
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false, // Disable legend to remove the orange rectangle
+      },
+      tooltip: {
+        enabled: true,
+        backgroundColor: "rgba(15, 23, 42, 0.95)",
+        titleFont: { family: "Inter, sans-serif", size: 13, weight: "bold" as const },
+        bodyFont: { family: "Inter, sans-serif", size: 12 },
+        callbacks: {
+          label: (context: any) => {
+            const value = viewMode === "grouped" ? context.raw : context.raw.y;
+            return `${context.label}: ${formatValue(value)} appels`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        title: { display: true, text: "Endpoints", color: "rgba(203, 213, 225, 0.9)", font: { family: "Inter, sans-serif", size: 14 } },
+        grid: { display: false },
+        ticks: { color: "rgba(203, 213, 225, 0.9)", font: { family: "Inter, sans-serif", size: 12 } },
+      },
+      y: {
+        title: { display: true, text: "Nombre total d'appels", color: "rgba(203, 213, 225, 0.9)", font: { family: "Inter, sans-serif", size: 14 } },
+        grid: { color: "rgba(148, 163, 184, 0.13)" },
+        ticks: {
+          color: "rgba(203, 213, 225, 0.85)",
+          font: { family: "Inter, sans-serif", size: 12 },
+          callback: function (tickValue: string | number) {
+            const value = typeof tickValue === "number" ? tickValue : parseFloat(tickValue);
+            return formatValue(Math.round(value));
+          },
+        },
+      },
+    },
   };
 
   const totalCalls = data.reduce((sum, d) => sum + d.total, 0);
@@ -302,29 +155,18 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
           </h3>
           <p className="correlation-description">Visualisation des appels d'APIs par période</p>
         </div>
-
         <div className="controls-section">
           <div className="period-selector">
-            <button
-              className={`period-btn ${selectedPeriod === "24h" ? "active" : ""}`}
-              onClick={() => setSelectedPeriod("24h")}
-            >
-              24h
-            </button>
-            <button
-              className={`period-btn ${selectedPeriod === "7d" ? "active" : ""}`}
-              onClick={() => setSelectedPeriod("7d")}
-            >
-              7d
-            </button>
-            <button
-              className={`period-btn ${selectedPeriod === "30d" ? "active" : ""}`}
-              onClick={() => setSelectedPeriod("30d")}
-            >
-              30d
-            </button>
+            {["24h", "7d", "30d"].map((period) => (
+              <button
+                key={period}
+                className={`period-btn ${selectedPeriod === period ? "active" : ""}`}
+                onClick={() => setSelectedPeriod(period as "24h" | "7d" | "30d")}
+              >
+                {period}
+              </button>
+            ))}
           </div>
-
           <div className="view-mode-selector">
             <button
               className={`mode-btn ${viewMode === "grouped" ? "active" : ""}`}
@@ -343,33 +185,13 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
           </div>
         </div>
       </div>
-
       <div className="chart-container">
-        <canvas
-          ref={canvasRef}
-          className="correlation-canvas"
-          onMouseMove={handleCanvasMouseMove}
-          onMouseLeave={() => setHoveredPoint(null)}
-        />
-
-        {hoveredPoint && (
-          <div
-            className="tooltip"
-            style={{
-              left: mousePos.x + 10,
-              top: mousePos.y - 10,
-            }}
-          >
-            <div className="tooltip-content">
-              <div className="tooltip-header">
-                <span className="tooltip-api">{hoveredPoint.api}</span>
-              </div>
-              <div className="tooltip-value">{formatValue(hoveredPoint.value)} appels</div>
-            </div>
-          </div>
+        {viewMode === "grouped" ? (
+          <Bar data={prepareChartData()} options={chartOptions} />
+        ) : (
+          <Scatter data={prepareChartData()} options={chartOptions} />
         )}
       </div>
-
       <div className="correlation-footer">
         <div className="api-legend">
           <div className="legend-title">Endpoints surveillés</div>
@@ -381,20 +203,20 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
               <span className="legend-dot all"></span>
               Tous les endpoints
             </button>
-            {prepareApiData().map((api) => (
+            {prepareChartData().labels.map((name, index) => (
               <button
-                key={api.name}
-                className={`legend-item ${selectedApi === api.name ? "active" : ""}`}
-                onClick={() => setSelectedApi(api.name)}
+                key={name}
+                className={`legend-item ${selectedApi === name ? "active" : ""}`}
+                onClick={() => setSelectedApi(name)}
               >
-                <span className="legend-dot" style={{ backgroundColor: api.color }}></span>
-                {api.name}
+                <span className="legend-dot" style={{ backgroundColor: prepareChartData().datasets[0].backgroundColor[index] }}></span>
+                {name}
                 <div className="legend-bar">
                   <div
                     className="legend-fill"
                     style={{
-                      width: `${totalCalls > 0 ? (api.data[0] / totalCalls) * 100 : 0}%`,
-                      backgroundColor: api.color,
+                      width: `${totalCalls > 0 ? (Number(prepareChartData().datasets[0].data[index]) / totalCalls) * 100 : 0}%`,
+                      backgroundColor: prepareChartData().datasets[0].backgroundColor[index],
                     }}
                   ></div>
                 </div>
