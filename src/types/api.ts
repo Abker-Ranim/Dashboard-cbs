@@ -7,61 +7,79 @@ export interface ApiCall {
   responseTime: number; // Mappé depuis durationMs
   name: string;
 }
-  export interface ApiStats {
-    totalRequests: number;
-    successfulRequests: number;
-    errorRequests: number;
-    clientErrors: number;
-    serverErrors: number;
-    averageResponseTime: number;
-    requestsPerSecond: number;
-    activeConnections: number;
-    availability?: number;
-    p95ResponseTime?: number;
-    throughput?: number;
-  }
-  
-  export interface ChartData {
-    requestsPerMinute: number[];
-    responseTime: number[];
-    errorRate: number[];
-  }
-  export interface EvolutionDataPoint {
-    time: string;
-    success: number;
-    errors: number;
-    total: number;
-  }
-  export interface EvolutionResponse {
-    data: EvolutionDataPoint[];
-    status: number;
-  }
-  export interface EndpointData {
-    total: number;
-    name: string;
-  }
-  
-  export interface EndpointResponse {
-    data: EndpointData[];
-    status: number;
-  }
 
-  export interface ApiUsageData {
-    name: string;
-    count: number;
-    percentage: number;
-    color: string;
-  }
+export interface ApiStats {
+  totalRequests: number;
+  successfulRequests: number;
+  errorRequests: number;
+  clientErrors: number;
+  serverErrors: number;
+  averageResponseTime: number;
+  requestsPerSecond: number;
+  activeConnections: number;
+  availability?: number;
+  p95ResponseTime?: number;
+  throughput?: number;
+}
 
-  export interface DonutChartProps {
-    data: number[];
-    colors: string[];
-    labels: string[];
-  }
+export interface ChartData {
+  requestsPerMinute: number[];
+  responseTime: number[];
+  errorRate: number[];
+}
 
-  export interface RequestEvolutionChartProps {
-    timeRange?: "24h" | "7d" | "30d";
-  }
-  export interface ApiCorrelation2DProps {
-    className?: string;
-  }
+export interface EvolutionDataPoint {
+  time: string;
+  success: number;
+  errors: number;
+  total: number;
+}
+
+export interface EvolutionResponse {
+  data: EvolutionDataPoint[];
+  status: number;
+}
+
+export interface EndpointData {
+  total: number;
+  name: string;
+}
+
+export interface EndpointResponse {
+  data: EndpointData[];
+  status: number;
+}
+
+export interface ApiUsageData {
+  name: string;
+  count: number;
+  percentage: number;
+  color: string;
+}
+
+export interface DonutChartProps {
+  data: number[];
+  colors: string[];
+  labels: string[];
+}
+
+export interface RequestEvolutionChartProps {
+  timeRange?: "24h" | "7d" | "30d";
+}
+
+export interface ApiCorrelation2DProps {
+  className?: string;
+}
+
+export interface StatsData {
+  successfulRequests: number;
+  clientErrors: number;
+  serverErrors: number;
+  errorRequests: number;
+}
+
+export interface ChartProps {
+  stats: StatsData;
+  usageData: ApiUsageData[];
+}
+
