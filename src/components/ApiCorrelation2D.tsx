@@ -81,7 +81,7 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
         bodyFont: { family: "Inter, sans-serif", size: 12 },
         callbacks: {
           label: (context: any) => {
-            return `${context.label}: ${formatValue(context.raw)} appels`;
+            return `${context.label}: ${formatValue(context.raw)} calls`;
           },
         },
       },
@@ -93,7 +93,7 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
         ticks: { color: "rgba(203, 213, 225, 0.9)", font: { family: "Inter, sans-serif", size: 12 } },
       },
       y: {
-        title: { display: true, text: "Nombre total d'appels", color: "rgba(203, 213, 225, 0.9)", font: { family: "Inter, sans-serif", size: 14 } },
+        title: { display: true, text: "Total number of calls", color: "rgba(203, 213, 225, 0.9)", font: { family: "Inter, sans-serif", size: 14 } },
         grid: { color: "rgba(148, 163, 184, 0.13)" },
         ticks: {
           color: "rgba(203, 213, 225, 0.85)",
@@ -116,9 +116,9 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
           <div className="header-content">
             <h3 className="chart-title">
               <Activity className="h-5 w-5" />
-              Analyse des APIs
+              API Analysis
             </h3>
-            <p className="correlation-description">Chargement des données...</p>
+            <p className="correlation-description">Loading data...</p>
           </div>
         </div>
       </div>
@@ -132,7 +132,7 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
           <div className="header-content">
             <h3 className="chart-title">
               <Activity className="h-5 w-5" />
-              Analyse des APIs
+              API Analysis
             </h3>
             <p className="correlation-description" style={{ color: "red" }}>{error}</p>
           </div>
@@ -145,11 +145,11 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
     <div className={`api-correlation-2d ${className}`}>
       <div className="correlation-header">
         <div className="header-content">
-          <h3 className="chart-title">
-            <Activity className="h-5 w-5" />
-            Analyse des APIs
-          </h3>
-          <p className="correlation-description">Visualisation des appels d'APIs par période</p>
+                      <h3 className="chart-title">
+              <Activity className="h-5 w-5" />
+              API Analysis
+            </h3>
+                      <p className="correlation-description">API calls visualization by period</p>
         </div>
         <div className="controls-section">
           <div className="period-selector">
@@ -171,14 +171,14 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
       </div>
       <div className="correlation-footer">
         <div className="api-legend">
-          <div className="legend-title">Endpoints surveillés</div>
+          <div className="legend-title">Monitored endpoints</div>
           <div className="legend-items">
             <button
               className={`legend-item ${selectedApi === "all" ? "active" : ""}`}
               onClick={() => setSelectedApi("all")}
             >
               <span className="legend-dot all"></span>
-              Tous les endpoints
+              All endpoints
             </button>
             {prepareChartData().labels.map((name, index) => (
               <button

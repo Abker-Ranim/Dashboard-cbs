@@ -1,7 +1,7 @@
 // src/services/apiUsageService.ts
 import { ApiCall } from "../types/api";
 
-// Interface pour les données d'utilisation des API
+// Interface for API usage data
 export interface ApiUsageData {
   name: string;
   count: number;
@@ -10,7 +10,7 @@ export interface ApiUsageData {
 }
 
 export const generateApiUsageData = (apiCalls: ApiCall[]): ApiUsageData[] => {
-  // Vérification des données
+  // Data validation
   if (!apiCalls || apiCalls.length === 0) return [];
 
   // Regroupement par nom d'API et comptage des occurrences
@@ -23,7 +23,7 @@ export const generateApiUsageData = (apiCalls: ApiCall[]): ApiUsageData[] => {
   const apiEntries = Object.entries(apiCounts);
   const totalCalls = apiEntries.reduce((sum, [, count]) => sum + count, 0);
 
-  // Génération des données avec pourcentages et couleurs
+  // Generate data with percentages and colors
   return apiEntries.map(([name, count]) => ({
     name,
     count,
@@ -32,7 +32,7 @@ export const generateApiUsageData = (apiCalls: ApiCall[]): ApiUsageData[] => {
   }));
 };
 
-// Fonction pour assigner des couleurs en fonction du nom de l'API
+  // Function to assign colors based on API name
 const getColorForApi = (apiName: string): string => {
   const apiColors: { [key: string]: string } = {
     getaccount: " #10B981", 

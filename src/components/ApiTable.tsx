@@ -59,9 +59,9 @@ export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) =>
       <div className="api-table-header">
         <h3 className="api-table-title">
           <Globe className="h-5 w-5 text-red-500" />
-          Requêtes API Récentes - IntechGeeks
+          Recent API Requests - IntechGeeks
         </h3>
-        <p className="api-table-description">Historique en temps réel des dernières requêtes</p>
+        <p className="api-table-description">Real-time history of latest requests</p>
       </div>
       <div className="api-table-wrapper">
         {error && <div className="error-message" style={{ color: "red" }}>{error}</div>}
@@ -80,7 +80,7 @@ export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) =>
               <tr>
                 <td colSpan={6} className="empty-state">
                   <Server className="empty-state-icon" />
-                  <p>Chargement des données...</p>
+                  <p>Loading data...</p>
                 </td>
               </tr>
             ) : currentItems.length > 0 ? (
@@ -107,7 +107,7 @@ export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) =>
               <tr>
                 <td colSpan={6} className="empty-state">
                   <Server className="empty-state-icon" />
-                  <p>En attente des premières requêtes API...</p>
+                  <p>Waiting for first API requests...</p>
                 </td>
               </tr>
             )}
@@ -120,7 +120,7 @@ export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) =>
             disabled={currentPage === 1}
             className="pagination-button"
           >
-            Précédent
+            Previous
           </button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
@@ -137,7 +137,7 @@ export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) =>
             disabled={currentPage === totalPages}
             className="pagination-button"
           >
-            Suivant
+            Next
           </button>
         </div>
       </div>

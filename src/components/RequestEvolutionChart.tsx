@@ -21,7 +21,7 @@ export const RequestEvolutionChart = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Récupération des données depuis le backend
+  // Fetch data from backend
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -31,12 +31,12 @@ export const RequestEvolutionChart = ({
           .map((item: EvolutionDataPoint) => ({
             ...item,
             time: formatTime(item.time, selectedTimeRange),
-            rawTime: item.time, // Stocker le temps brut pour le tri
+            rawTime: item.time, // Store raw time for sorting
           }))
           .sort(
             (a, b) =>
               new Date(a.rawTime).getTime() - new Date(b.rawTime).getTime()
-          ); // Tri par temps
+          ); // Sort by time
         setData(adjustedData);
         setError(null);
       } catch (err) {
@@ -49,7 +49,7 @@ export const RequestEvolutionChart = ({
 
     loadData();
   }, [selectedTimeRange]);
-  // Fonction pour formater le temps selon la plage
+  // Function to format time based on range
   const formatTime = (timeStr: string, range: string) => {
     const date = new Date(timeStr);
     return range === "24h"
@@ -261,12 +261,12 @@ export const RequestEvolutionChart = ({
     ctx.fillStyle = "#10B981";
     ctx.fillRect(padding.left, legendY, 12, 12);
     ctx.fillStyle = "white";
-    ctx.fillText("Succès", padding.left + 20, legendY + 9);
+    ctx.fillText("Success", padding.left + 20, legendY + 9);
 
     ctx.fillStyle = "#EF4444";
     ctx.fillRect(padding.left + 100, legendY, 12, 12);
     ctx.fillStyle = "white";
-    ctx.fillText("Erreurs", padding.left + 120, legendY + 9);
+    ctx.fillText("Errors", padding.left + 120, legendY + 9);
   }, [data, animationProgress, isLoading]);
 
   const totalRequests = data.reduce((sum, d) => sum + d.total, 0);
@@ -294,10 +294,10 @@ export const RequestEvolutionChart = ({
           <div className="header-content">
             <div className="title-section">
               <h3 className="chart-title">
-                <Activity className="h-5 w-5" />
-                Évolution des Requêtes
-              </h3>
-              <p className="chart-description">Chargement des données...</p>
+                              <Activity className="h-5 w-5" />
+              Request Evolution
+            </h3>
+            <p className="chart-description">Loading data...</p>
             </div>
           </div>
         </div>
@@ -312,12 +312,12 @@ export const RequestEvolutionChart = ({
           <div className="header-content">
             <div className="title-section">
               <h3 className="chart-title">
-                <Activity className="h-5 w-5" />
-                Évolution des Requêtes
-              </h3>
-              <p className="chart-description" style={{ color: "red" }}>
-                {error}
-              </p>
+                              <Activity className="h-5 w-5" />
+              Request Evolution
+            </h3>
+            <p className="chart-description" style={{ color: "red" }}>
+              {error}
+            </p>
             </div>
           </div>
         </div>
@@ -332,10 +332,10 @@ export const RequestEvolutionChart = ({
           <div className="title-section">
             <h3 className="chart-title">
               <Activity className="h-5 w-5" />
-              Évolution des Requêtes
+              Request Evolution
             </h3>
             <p className="chart-description">
-              Analyse temporelle des succès et échecs
+              Temporal analysis of successes and failures
             </p>
           </div>
 
@@ -368,7 +368,7 @@ export const RequestEvolutionChart = ({
             </div>
             <div className="stat-content">
               <div className="stat-value">{successRate.toFixed(1)}%</div>
-              <div className="stat-label">Taux de succès</div>
+              <div className="stat-label">Success rate</div>
             </div>
           </div>
 
@@ -378,7 +378,7 @@ export const RequestEvolutionChart = ({
             </div>
             <div className="stat-content">
               <div className="stat-value">{errorRate.toFixed(1)}%</div>
-              <div className="stat-label">Taux d'erreur</div>
+              <div className="stat-label">Error rate</div>
             </div>
           </div>
 
@@ -395,7 +395,7 @@ export const RequestEvolutionChart = ({
                 {trend === "up" ? "+" : "-"}
                 {trendPercentage.toFixed(1)}%
               </div>
-              <div className="stat-label">Tendance</div>
+              <div className="stat-label">Trend</div>
             </div>
           </div>
 
@@ -405,7 +405,7 @@ export const RequestEvolutionChart = ({
             </div>
             <div className="stat-content">
               <div className="stat-value">{totalRequests.toLocaleString()}</div>
-              <div className="stat-label">Total requêtes</div>
+              <div className="stat-label">Total requests</div>
             </div>
           </div>
         </div>
@@ -433,11 +433,11 @@ export const RequestEvolutionChart = ({
             <div className="tooltip-stats">
               <div className="tooltip-stat success">
                 <span className="dot"></span>
-                Succès: {hoveredPoint.data.success}
+                Success: {hoveredPoint.data.success}
               </div>
               <div className="tooltip-stat error">
                 <span className="dot"></span>
-                Erreurs: {hoveredPoint.data.errors}
+                Errors: {hoveredPoint.data.errors}
               </div>
               <div className="tooltip-total">
                 Total: {hoveredPoint.data.total}
@@ -451,38 +451,38 @@ export const RequestEvolutionChart = ({
         <div className="insight-card">
           <div className="insight-icon">📈</div>
           <div className="insight-content">
-            <div className="insight-title">Pic d'activité</div>
-            <div className="insight-text">
-              Maximum de {Math.max(...data.map((d) => d.total))} requêtes/h
-            </div>
+                      <div className="insight-title">Activity peak</div>
+          <div className="insight-text">
+            Maximum of {Math.max(...data.map((d) => d.total))} requests/h
+          </div>
           </div>
         </div>
 
         <div className="insight-card">
           <div className="insight-icon">⚡</div>
           <div className="insight-content">
-            <div className="insight-title">Performance</div>
-            <div className="insight-text">
-              {successRate > 95
-                ? "Excellente"
-                : successRate > 90
-                ? "Bonne"
-                : "À améliorer"}
-            </div>
+                      <div className="insight-title">Performance</div>
+          <div className="insight-text">
+            {successRate > 95
+              ? "Excellent"
+              : successRate > 90
+              ? "Good"
+              : "Needs improvement"}
+          </div>
           </div>
         </div>
 
         <div className="insight-card">
           <div className="insight-icon">🎯</div>
           <div className="insight-content">
-            <div className="insight-title">Stabilité</div>
-            <div className="insight-text">
-              {errorRate < 5
-                ? "Très stable"
-                : errorRate < 10
-                ? "Stable"
-                : "Instable"}
-            </div>
+                      <div className="insight-title">Stability</div>
+          <div className="insight-text">
+            {errorRate < 5
+              ? "Very stable"
+              : errorRate < 10
+              ? "Stable"
+              : "Unstable"}
+          </div>
           </div>
         </div>
       </div>

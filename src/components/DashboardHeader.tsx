@@ -7,13 +7,13 @@ export const DashboardHeader = () => {
         <img src="/logo.png" alt="IntechGeeks Logo" className="dashboard-logo" />
         <div>
           <h1 className="dashboard-title">Dashboard API Monitoring</h1>
-          <p className="dashboard-subtitle">Supervision en temps réel des requêtes API</p>
+          <p className="dashboard-subtitle">Real-time API request supervision</p>
         </div>
       </div>
       <div className="dashboard-status">
         <div className="status-indicator">
           <div className="status-dot"></div>
-          <span className="status-text">APIs actives - IntechGeeks</span>
+          <span className="status-text">Active APIs - IntechGeeks</span>
         </div>
       </div>
     </div>

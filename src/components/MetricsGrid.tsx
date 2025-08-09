@@ -20,7 +20,7 @@ export const MetricsGrid = ({ stats }: MetricsGridProps) => {
     <div className="metrics-grid">
       <div className="metric-card blue">
         <div className="metric-card-header">
-          <span className="metric-card-title">Total Requêtes</span>
+          <span className="metric-card-title">Total Requests</span>
           <Globe className="metric-card-icon" />
         </div>
         <div className="metric-card-content">
@@ -32,27 +32,27 @@ export const MetricsGrid = ({ stats }: MetricsGridProps) => {
 
       <div className="metric-card red">
         <div className="metric-card-header">
-          <span className="metric-card-title">Taux de Succès</span>
+          <span className="metric-card-title">Success Rate</span>
           <TrendingUp className="metric-card-icon" />
         </div>
         <div className="metric-card-content">
           <div className="metric-value">{successRate}%</div>
           <p className="metric-description">
-            {stats.successfulRequests} requêtes réussies
+            {stats.successfulRequests} successful requests
           </p>
         </div>
       </div>
 
       <div className="metric-card gray">
         <div className="metric-card-header">
-          <span className="metric-card-title">Temps de Réponse</span>
+          <span className="metric-card-title">Response Time</span>
           <Clock className="metric-card-icon" />
         </div>
         <div className="metric-card-content">
           <div className="metric-value">
             {formatResponseTime(stats.averageResponseTime)}
           </div>
-          <p className="metric-description">Temps moyen</p>
+          <p className="metric-description">Average time</p>
         </div>
       </div>
     </div>

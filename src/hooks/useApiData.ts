@@ -24,7 +24,7 @@ export const useApiData = () => {
     responseTime: [],
     errorRate: [],
   });
-  const [usageData, setUsageData] = useState<ApiUsageData[]>([]); // Nouvel état pour les données d'utilisation
+      const [usageData, setUsageData] = useState<ApiUsageData[]>([]); // New state for usage data
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +43,7 @@ export const useApiData = () => {
         const errorRequests = totalRequests - successfulRequests;
         const averageResponseTime = data.reduce((sum, call) => sum + call.responseTime, 0) / totalRequests || 0;
 
-        // Calcul des données d'utilisation avec pourcentages
+        // Calculate usage data with percentages
         const usage = generateApiUsageData(data);
 
         setStats({
@@ -66,7 +66,7 @@ export const useApiData = () => {
           errorRate: Array(totalRequests).fill(0).map((_, i) => i % 5 === 0 ? 1 : 0),
         });
 
-        setUsageData(usage); // Stocke les données d'utilisation enrichies
+        setUsageData(usage); // Store enriched usage data
         setIsLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch API data");

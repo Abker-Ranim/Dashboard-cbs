@@ -119,7 +119,7 @@ export const Chart: React.FC<ChartProps> = ({ stats, usageData }) => {
                       </div>
                       <div className="legend-details">
                         <span className="legend-count">
-                          {value.toLocaleString()} {config.chartType === "pie" ? "appels" : "requests"}
+                          {value.toLocaleString()} {config.chartType === "pie" ? "calls" : "requests"}
                         </span>
                       </div>
                     </div>
