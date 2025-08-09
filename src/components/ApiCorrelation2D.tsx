@@ -39,6 +39,7 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
 
   // Formater la valeur
   const formatValue = (value: number): string => {
+    if (!isFinite(value) || isNaN(value)) return "0";
     if (value >= 1000) {
       return `${(value / 1000).toFixed(1)}k`;
     }
@@ -85,6 +86,35 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
 
     const apiData = prepareApiData();
     const filteredData = selectedApi === "all" ? apiData : apiData.filter((api) => api.name === selectedApi);
+    
+    // Handle empty data case
+    if (filteredData.length === 0) {
+      // Draw empty chart with grid lines only
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.13)";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= 5; i++) {
+        const y = padding.top + (chartHeight / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(padding.left + chartWidth, y);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "rgba(203, 213, 225, 0.9)";
+      ctx.font = "14px Inter, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Aucune donnée disponible", width / 2, height / 2);
+      ctx.fillText("Endpoints", width / 2, height - 10);
+
+      ctx.save();
+      ctx.translate(20, height / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText("Nombre total d'appels", 0, 0);
+      ctx.restore();
+      return;
+    }
+
     const maxValue = Math.max(...filteredData.flatMap((api) => api.data));
 
     ctx.strokeStyle = "rgba(148, 163, 184, 0.13)";
@@ -142,6 +172,8 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
     maxValue: number,
     barWidth: number,
   ) => {
+    if (maxValue === 0) return; // Don't draw bars if maxValue is 0
+    
     data.forEach((api, index) => {
       const value = api.data[0];
       const x = padding.left + index * barWidth;
@@ -166,6 +198,8 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
     maxValue: number,
     barWidth: number,
   ) => {
+    if (maxValue === 0) return; // Don't draw lines if maxValue is 0
+    
     data.forEach((api, index) => {
       const value = api.data[0];
       const x = padding.left + index * barWidth;
@@ -204,15 +238,20 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
       y >= padding.top &&
       y <= padding.top + (rect.height - padding.top - padding.bottom)
     ) {
-      const index = Math.floor((x - padding.left) / (chartWidth / (data.length > 0 ? data.length : 1)));
-      if (index >= 0 && index < (data.length > 0 ? data.length : 1)) {
-        const apiData = prepareApiData();
-        const api = apiData[index];
-        setHoveredPoint({
-          api: api.name,
-          index: index,
-          value: api.data[0],
-        });
+      const apiData = prepareApiData();
+      // Check if there's data before trying to access it
+      if (apiData.length > 0) {
+        const index = Math.floor((x - padding.left) / (chartWidth / apiData.length));
+        if (index >= 0 && index < apiData.length) {
+          const api = apiData[index];
+          if (api) {
+            setHoveredPoint({
+              api: api.name,
+              index: index,
+              value: api.data[0],
+            });
+          }
+        }
       }
     } else {
       setHoveredPoint(null);
@@ -354,7 +393,7 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
                   <div
                     className="legend-fill"
                     style={{
-                      width: `${(api.data[0] / totalCalls) * 100}%`,
+                      width: `${totalCalls > 0 ? (api.data[0] / totalCalls) * 100 : 0}%`,
                       backgroundColor: api.color,
                     }}
                   ></div>
