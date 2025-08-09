@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bar, Scatter } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, BarElement, PointElement, LineElement, Tooltip, LinearScale, CategoryScale } from "chart.js";
 import { Activity, BarChart3, TrendingUp } from "lucide-react";
 import "../styles/ApiCorrelation2D.css";
@@ -12,7 +12,6 @@ ChartJS.register(BarElement, PointElement, LineElement, Tooltip, LinearScale, Ca
 export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<"24h" | "7d" | "30d">("24h");
   const [selectedApi, setSelectedApi] = useState<string>("all");
-  const [viewMode, setViewMode] = useState<"grouped" | "lines">("grouped");
   const [data, setData] = useState<EndpointData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,13 +56,11 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
       datasets: [
         {
           label: "", // Empty label to remove title
-          data: filteredData.map((api) => (viewMode === "grouped" ? api.total : { x: api.name, y: api.total })),
+          data: filteredData.map((api) => api.total),
           backgroundColor: filteredData.map((api) => api.color),
           borderColor: filteredData.map((api) => api.color.replace(/0\.\d+/, "1")),
-          borderWidth: viewMode === "grouped" ? 1 : 2,
+          borderWidth: 1,
           barPercentage: 0.8,
-          pointRadius: viewMode === "lines" ? 4 : 0,
-          pointHoverRadius: viewMode === "lines" ? 6 : 0,
         },
       ],
     };
@@ -84,8 +81,7 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
         bodyFont: { family: "Inter, sans-serif", size: 12 },
         callbacks: {
           label: (context: any) => {
-            const value = viewMode === "grouped" ? context.raw : context.raw.y;
-            return `${context.label}: ${formatValue(value)} appels`;
+            return `${context.label}: ${formatValue(context.raw)} appels`;
           },
         },
       },
@@ -167,30 +163,11 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
               </button>
             ))}
           </div>
-          <div className="view-mode-selector">
-            <button
-              className={`mode-btn ${viewMode === "grouped" ? "active" : ""}`}
-              onClick={() => setViewMode("grouped")}
-              title="Barres groupées"
-            >
-              <BarChart3 size={16} />
-            </button>
-            <button
-              className={`mode-btn ${viewMode === "lines" ? "active" : ""}`}
-              onClick={() => setViewMode("lines")}
-              title="Lignes"
-            >
-              <TrendingUp size={16} />
-            </button>
-          </div>
+        
         </div>
       </div>
       <div className="chart-container">
-        {viewMode === "grouped" ? (
-          <Bar data={prepareChartData()} options={chartOptions} />
-        ) : (
-          <Scatter data={prepareChartData()} options={chartOptions} />
-        )}
+        <Bar data={prepareChartData()} options={chartOptions} />
       </div>
       <div className="correlation-footer">
         <div className="api-legend">
