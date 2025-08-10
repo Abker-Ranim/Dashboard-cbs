@@ -13,10 +13,16 @@
   padding: 1.5rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* Optimisations pour la stabilité du rendu */
+  transform: translateZ(0);
+  will-change: auto;
+  /* Amélioration de la performance du backdrop-filter */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .chart-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) translateZ(0);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
@@ -44,6 +50,8 @@
   flex-direction: row;
   gap: 0.75rem;
   padding: 0.75rem;
+  /* Optimisation du rendu */
+  transform: translateZ(0);
 }
 
 .api-chart-wrapper {
@@ -52,6 +60,9 @@
   align-items: center;
   justify-content: center;
   height: 200px;
+  /* Optimisation du rendu */
+  transform: translateZ(0);
+  will-change: auto;
 }
 
 .api-legend {
@@ -61,6 +72,8 @@
   gap: 0.5rem;
   max-height: 200px;
   overflow-y: auto;
+  /* Optimisation du rendu */
+  transform: translateZ(0);
 }
 
 .api-legend::-webkit-scrollbar {
@@ -89,11 +102,15 @@
   color: #cbd5e1;
   cursor: pointer;
   transition: all 0.3s ease;
+  /* Optimisation du rendu */
+  transform: translateZ(0);
+  will-change: auto;
 }
 
 .legend:hover {
   background: rgba(59, 130, 246, 0.1);
   border-color: rgba(59, 130, 246, 0.3);
+  transform: translateZ(0);
 }
 
 .legend-header {
@@ -128,6 +145,17 @@
 .legend-count {
   font-size: 0.7rem;
   color: #94a3b8;
+}
+
+/* Optimisations supplémentaires pour le défilement */
+@media (prefers-reduced-motion: no-preference) {
+  .chart-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .legend {
+    transition: all 0.2s ease;
+  }
 }
 
 @media (max-width: 768px) {

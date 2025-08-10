@@ -1,5 +1,6 @@
 import { Doughnut, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { useMemo, useCallback } from "react";
 import "../styles/charts.css";
 import {ChartProps } from "types/api";
 
@@ -13,8 +14,8 @@ const COLORS = {
 };
 
 export const Chart: React.FC<ChartProps> = ({ stats, usageData }) => {
-  // Configuration des données pour chaque type de graphique
-  const getChartDataConfig = (variant: "http-status" | "api-usage") => {
+  // Configuration des données pour chaque type de graphique - optimisé avec useMemo
+  const getChartDataConfig = useCallback((variant: "http-status" | "api-usage") => {
     if (variant === "http-status") {
       return {
         labels: ["2xx Success", "4xx Client", "5xx Server", "Others"],
@@ -33,10 +34,10 @@ export const Chart: React.FC<ChartProps> = ({ stats, usageData }) => {
         colors: COLORS.apiUsage.slice(0, usageData.length), // Utilise les couleurs disponibles
       };
     }
-  };
+  }, [stats, usageData]);
 
-  // Options de configuration du graphique
-  const chartOptions = (variant: "http-status" | "api-usage") => ({
+  // Options de configuration du graphique - optimisé avec useMemo
+  const chartOptions = useCallback((variant: "http-status" | "api-usage") => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -57,21 +58,38 @@ export const Chart: React.FC<ChartProps> = ({ stats, usageData }) => {
       },
     },
     cutout: variant === "http-status" ? "45%" : "0%", // Doughnut pour http-status, Pie pour api-usage
-  });
+  }), []);
 
-  // Configuration du type de graphique et des métadonnées
-  const getChartConfig = (variant: "http-status" | "api-usage") => ({
+  // Configuration du type de graphique et des métadonnées - optimisé avec useMemo
+  const getChartConfig = useCallback((variant: "http-status" | "api-usage") => ({
     chartType: variant === "http-status" ? "doughnut" : "pie",
     title: variant === "http-status" ? "HTTP Status Distribution" : "API Usage Distribution",
     description: variant === "http-status" ? "Distribution of response codes" : "Percentage of calls per API endpoint",
-  });
+  }), []);
+
+  // Mémorisation des données des graphiques pour éviter les re-rendus inutiles
+  const chartData = useMemo(() => {
+    return (["http-status", "api-usage"] as const).map((variant) => {
+      const { labels, data, colors } = getChartDataConfig(variant);
+      const total = data.reduce((sum, val) => sum + val, 0);
+      
+      return {
+        variant,
+        labels,
+        data,
+        colors,
+        total,
+        chartType: variant === "http-status" ? "doughnut" : "pie",
+        title: variant === "http-status" ? "HTTP Status Distribution" : "API Usage Distribution",
+        description: variant === "http-status" ? "Distribution of response codes" : "Percentage of calls per API endpoint",
+      };
+    });
+  }, [getChartDataConfig]);
 
   return (
     <div className="charts-grid">
-      {(["http-status", "api-usage"] as const).map((variant) => {
-        const { chartType, title, description } = getChartConfig(variant);
-        const { labels, data, colors } = getChartDataConfig(variant);
-        const total = data.reduce((sum, val) => sum + val, 0);
+      {chartData.map((chartInfo) => {
+        const { variant, labels, data, colors, total, chartType, title, description } = chartInfo;
 
         return (
           <div key={variant} className="chart-card">
