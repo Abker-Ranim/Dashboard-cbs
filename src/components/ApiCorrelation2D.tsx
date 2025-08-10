@@ -45,7 +45,7 @@ export function ApiCorrelation2D({ className = "" }: ApiCorrelation2DProps) {
   const prepareChartData = () => {
     const apiData = data.map((item, index) => ({
       name: item.name,
-      color: ["rgba(254, 165, 0, 0.72)", "rgba(239, 68, 68, 0.62)", "rgba(71, 181, 27, 0.76)", "rgba(11, 77, 245, 0.7)"][index % 4],
+      color: ["#10B981", "#EF4444", "#F59E0B", "#3B82F6"][index % 4],
       total: item.total,
     }));
 
