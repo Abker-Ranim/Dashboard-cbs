@@ -67,11 +67,12 @@ export const Chart: React.FC<ChartProps> = ({ stats, usageData }) => {
     description: variant === "http-status" ? "Distribution of response codes" : "Percentage of calls per API endpoint",
   }), []);
 
-  // Mémorisation des données des graphiques pour éviter les re-rendus inutiles
+  // Mémorisation des données des graphiques pour éviter les re-renders inutiles
   const chartData = useMemo(() => {
     return (["http-status", "api-usage"] as const).map((variant) => {
       const { labels, data, colors } = getChartDataConfig(variant);
       const total = data.reduce((sum, val) => sum + val, 0);
+      const config = getChartConfig(variant);
       
       return {
         variant,
@@ -79,12 +80,12 @@ export const Chart: React.FC<ChartProps> = ({ stats, usageData }) => {
         data,
         colors,
         total,
-        chartType: variant === "http-status" ? "doughnut" : "pie",
-        title: variant === "http-status" ? "HTTP Status Distribution" : "API Usage Distribution",
-        description: variant === "http-status" ? "Distribution of response codes" : "Percentage of calls per API endpoint",
+        chartType: config.chartType,
+        title: config.title,
+        description: config.description,
       };
     });
-  }, [getChartDataConfig]);
+  }, [getChartDataConfig, getChartConfig]);
 
   return (
     <div className="charts-grid">
