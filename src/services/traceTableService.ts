@@ -2,7 +2,7 @@ import { ApiCall } from "../types/api";
 
 export const fetchTableData = async (): Promise<ApiCall[]> => {
   try {
-    const baseUrl = process.env.REACT_APP_API_URL  // Valeur par défaut si non défini
+    const baseUrl = process.env.REACT_APP_API_URL  
     const url = `${baseUrl}/traces`;
 
     const response = await fetch(url, {

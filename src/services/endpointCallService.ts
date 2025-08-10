@@ -1,5 +1,3 @@
-// src/services/endpointCallService.ts
-
 import { EndpointResponse } from "types/api";
 
 

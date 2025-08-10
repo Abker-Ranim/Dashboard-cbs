@@ -1,8 +1,8 @@
 // src/hooks/useApiData.ts
 import { useState, useEffect } from "react";
-import { ApiCall, ApiStats, ChartData } from "../types/api";
+import { ApiCall, ApiStats, ApiUsageData, ChartData } from "../types/api";
 import { fetchTableData } from "../services/traceTableService";
-import { ApiUsageData, generateApiUsageData } from "../services/apiUsageService";
+import {  generateApiUsageData } from "../services/apiUsageService";
 
 export const useApiData = () => {
   const [apiCalls, setApiCalls] = useState<ApiCall[]>([]);

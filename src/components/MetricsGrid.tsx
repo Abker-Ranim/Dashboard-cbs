@@ -3,7 +3,7 @@ import type { ApiStats } from "../types/api";
 import "../styles/metrics-grid.css";
 
 const formatResponseTime = (ms: number): string => {
-  return `${ms} ms`;
+  return `${ms.toFixed(3)} ms`;
 };
 
 interface MetricsGridProps {

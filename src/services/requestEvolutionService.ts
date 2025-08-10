@@ -1,4 +1,3 @@
-// src/services/requestEvolutionService.ts
 import { EvolutionResponse } from "../types/api";
 
 export const fetchEvolutionData = async (timeRange: "24h" | "7d" | "30d"): Promise<EvolutionResponse> => {

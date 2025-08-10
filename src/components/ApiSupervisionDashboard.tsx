@@ -34,7 +34,7 @@ const ApiSupervisionDashboard: React.FC = () => {
         <MetricsGrid stats={stats} />
         <RequestEvolutionChart />
         <Chart stats={stats} usageData={usageData} />
-          <ApiCorrelation2D />
+        <ApiCorrelation2D />
         <ApiTable apiCalls={apiCalls} />
         <DashboardFooter />
       </div>

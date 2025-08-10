@@ -5,7 +5,7 @@ import "../styles/api-table.css";
 import { fetchTableData } from "../services/traceTableService";
 
 const formatResponseTime = (ms: number): string => {
-  return `${ms} ms`;
+  return `${ms.toFixed(3)} ms`;
 };
 interface ApiTableProps {
   apiCalls?: ApiCall[]; 
@@ -41,7 +41,9 @@ export const ApiTable: React.FC<ApiTableProps> = ({ apiCalls: propApiCalls }) =>
     return () => clearInterval(interval);
   }, [propApiCalls]);
 
-  const displayCalls = propApiCalls || apiCalls;
+  const displayCalls = (propApiCalls || apiCalls)
+    .slice()
+    .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
   // Logique de pagination
   const indexOfLastItem = currentPage * itemsPerPage;

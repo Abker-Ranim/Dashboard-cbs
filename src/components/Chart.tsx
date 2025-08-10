@@ -1,45 +1,41 @@
-import { Doughnut } from "react-chartjs-2";
+import { Doughnut, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import "../styles/charts.css";
-import { ApiUsageData, ChartProps, StatsData } from "types/api";
+import {ChartProps } from "types/api";
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+// Couleurs centralisées (définies une seule fois)
+const COLORS = {
+  httpStatus: ["#45a842", "#F59E0B", "#EF4444", "#6B7280"], // 2xx, 4xx, 5xx, Others
+  apiUsage: ["#10B981", "#EF4444", "#F59E0B", "#3B82F6"],   // getaccount, getcustomer, gethistory, dotransfer
+};
+
 export const Chart: React.FC<ChartProps> = ({ stats, usageData }) => {
-  const getHttpStatusData = (stats: StatsData) => ({
-    labels: ["2xx Success", "4xx Client", "5xx Server", "Others"],
-    colors: ["#10b926", "#F59E0B", "#EF4444", "#6B7280"],
-    data: [
-      stats.successfulRequests,
-      stats.clientErrors,
-      stats.serverErrors,
-      stats.errorRequests - stats.clientErrors - stats.serverErrors,
-    ],
-  });
-
-  const getApiUsageData = (usageData: ApiUsageData[]) => ({
-    labels: usageData.map((item) => item.name),
-    colors: ["#160cc6", "#0f9e0a", "#f59e0b", "#fd4040fd"],
-    data: usageData.map((item) => item.count),
-  });
-
-  const getChartData = (variant: "http-status" | "api-usage") => {
-    const config = variant === "http-status" ? getHttpStatusData(stats) : getApiUsageData(usageData);
-    return {
-      labels: config.labels,
-      datasets: [
-        {
-          data: config.data,
-          backgroundColor: config.colors,
-          borderColor: config.data.map(() => "#ffffff"), // White border for all segments
-          borderWidth: 2,
-          hoverOffset: 12,
-        },
-      ],
-    };
+  // Configuration des données pour chaque type de graphique
+  const getChartDataConfig = (variant: "http-status" | "api-usage") => {
+    if (variant === "http-status") {
+      return {
+        labels: ["2xx Success", "4xx Client", "5xx Server", "Others"],
+        data: [
+          stats.successfulRequests,
+          stats.clientErrors,
+          stats.serverErrors,
+          stats.errorRequests - stats.clientErrors - stats.serverErrors,
+        ],
+        colors: COLORS.httpStatus,
+      };
+    } else {
+      return {
+        labels: usageData.map((item) => item.name),
+        data: usageData.map((item) => item.count),
+        colors: COLORS.apiUsage.slice(0, usageData.length), // Utilise les couleurs disponibles
+      };
+    }
   };
 
+  // Options de configuration du graphique
   const chartOptions = (variant: "http-status" | "api-usage") => ({
     responsive: true,
     maintainAspectRatio: false,
@@ -48,11 +44,7 @@ export const Chart: React.FC<ChartProps> = ({ stats, usageData }) => {
       tooltip: {
         enabled: true,
         backgroundColor: "rgba(15, 23, 42, 0.95)",
-        titleFont: { 
-          family: "Inter, sans-serif", 
-          size: 12, 
-          weight: 600 as const 
-        },
+        titleFont: { family: "Inter, sans-serif", size: 12, weight: 600 },
         bodyFont: { family: "Inter, sans-serif", size: 11 },
         callbacks: {
           label: (context: any) => {
@@ -64,48 +56,68 @@ export const Chart: React.FC<ChartProps> = ({ stats, usageData }) => {
         },
       },
     },
-    cutout: variant === "http-status" ? "45%" : "0%", // Doughnut for http-status, pie for api-usage
+    cutout: variant === "http-status" ? "45%" : "0%", // Doughnut pour http-status, Pie pour api-usage
   });
 
-  const getChartConfig = (variant: "http-status" | "api-usage") => {
-    if (variant === "http-status") {
-      return {
-        chartType: "doughnut" as const,
-        title: "HTTP Status Distribution",
-        description: "Distribution of response codes",
-      };
-    } else {
-      return {
-        chartType: "pie" as const,
-        title: "API Usage Distribution",
-        description: "Percentage of calls per API endpoint",
-      };
-    }
-  };
+  // Configuration du type de graphique et des métadonnées
+  const getChartConfig = (variant: "http-status" | "api-usage") => ({
+    chartType: variant === "http-status" ? "doughnut" : "pie",
+    title: variant === "http-status" ? "HTTP Status Distribution" : "API Usage Distribution",
+    description: variant === "http-status" ? "Distribution of response codes" : "Percentage of calls per API endpoint",
+  });
 
   return (
     <div className="charts-grid">
       {(["http-status", "api-usage"] as const).map((variant) => {
-        const config = getChartConfig(variant);
-        const chartData = getChartData(variant);
-        const total = chartData.datasets[0].data.reduce((sum, val) => sum + val, 0);
-        const colors = variant === "http-status" 
-          ? getHttpStatusData(stats).colors 
-          : getApiUsageData(usageData).colors;
+        const { chartType, title, description } = getChartConfig(variant);
+        const { labels, data, colors } = getChartDataConfig(variant);
+        const total = data.reduce((sum, val) => sum + val, 0);
 
         return (
           <div key={variant} className="chart-card">
             <div className="chart-header">
-              <h3 className="chart-title">{config.title}</h3>
-              <p className="chart-description">{config.description}</p>
+              <h3 className="chart-title">{title}</h3>
+              <p className="chart-description">{description}</p>
             </div>
             <div className="api-usage-container">
               <div className="api-chart-wrapper">
-                <Doughnut data={getChartData(variant)} options={chartOptions(variant)} />
+                {variant === "http-status" ? (
+                  <Doughnut
+                    data={{
+                      labels,
+                      datasets: [
+                        {
+                          data,
+                          backgroundColor: colors,
+                          borderColor: Array(data.length).fill("#ffffff"), // Bordure blanche
+                          borderWidth: 2,
+                          hoverOffset: 12,
+                        },
+                      ],
+                    }}
+                    options={chartOptions(variant)}
+                  />
+                ) : (
+                  <Pie
+                    data={{
+                      labels,
+                      datasets: [
+                        {
+                          data,
+                          backgroundColor: colors,
+                          borderColor: Array(data.length).fill("#ffffff"), // Bordure blanche
+                          borderWidth: 2,
+                          hoverOffset: 12,
+                        },
+                      ],
+                    }}
+                    options={chartOptions(variant)}
+                  />
+                )}
               </div>
               <div className="api-legend">
-                {chartData.labels.map((label, index) => {
-                  const value = chartData.datasets[0].data[index];
+                {labels.map((label, index) => {
+                  const value = data[index];
                   const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : "0.0";
                   return (
                     <div key={index} className="legend">
@@ -119,7 +131,7 @@ export const Chart: React.FC<ChartProps> = ({ stats, usageData }) => {
                       </div>
                       <div className="legend-details">
                         <span className="legend-count">
-                          {value.toLocaleString()} {config.chartType === "pie" ? "calls" : "requests"}
+                          {value.toLocaleString()} {chartType === "pie" ? "calls" : "requests"}
                         </span>
                       </div>
                     </div>
