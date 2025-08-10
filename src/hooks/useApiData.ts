@@ -1,4 +1,3 @@
-// src/hooks/useApiData.ts
 import { useState, useEffect } from "react";
 import { ApiCall, ApiStats, ApiUsageData, ChartData } from "../types/api";
 import { fetchTableData } from "../services/traceTableService";
