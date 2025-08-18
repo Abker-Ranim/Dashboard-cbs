@@ -31,7 +31,7 @@ export const RequestEvolutionChart = ({
           .map((item: EvolutionDataPoint) => ({
             ...item,
             time: formatTime(item.time, selectedTimeRange),
-            rawTime: item.time, // Store raw time for sorting
+            rawTime: item.time, 
           }))
           .sort(
             (a, b) =>
@@ -294,7 +294,7 @@ export const RequestEvolutionChart = ({
           <div className="header-content">
             <div className="title-section">
               <h3 className="chart-title">
-                              <Activity className="h-5 w-5" />
+                  <Activity className="h-5 w-5" />
               Request Evolution
             </h3>
             <p className="chart-description">Loading data...</p>
@@ -350,13 +350,13 @@ export const RequestEvolutionChart = ({
               className={selectedTimeRange === "7d" ? "active" : ""}
               onClick={() => setSelectedTimeRange("7d")}
             >
-              7j
+              7d
             </button>
             <button
               className={selectedTimeRange === "30d" ? "active" : ""}
               onClick={() => setSelectedTimeRange("30d")}
             >
-              30j
+              30d
             </button>
           </div>
         </div>
